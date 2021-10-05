@@ -1,0 +1,13 @@
+class {
+  onCreate() {
+    this.state = { open: true };
+  }
+  toggle() {
+    this.state.open = !this.state.open;
+  }
+}
+
+<button onClick("toggle")>Toggle</button>
+<if(state.open)>
+  <micro-frame src="embed"/>
+</if>

@@ -1,0 +1,96 @@
+import path from "path";
+import fetch from "make-fetch-happen";
+
+static const cachePath = path.resolve("node_modules/.cache/fetch");
+static const loadKey = Symbol();
+
+static function createDeferredPromise() {
+  let resolve;
+  let reject;
+  const promise = new Promise((_resolve, _reject) => {
+    resolve = _resolve;
+    reject = _reject;
+  });
+  promise.resolve = resolve;
+  promise.reject = reject;
+  return promise;
+}
+
+$ let buf = "";
+$ let hasMore = true;
+$ let sentData = false;
+$ let loadMarker = input.loading && `$mf${(out.global[loadKey] = (out.global[loadKey] || 0) + 1).toString(36)}`;
+$ let next = (async () => {
+  const incomingMessage = out.stream && (out.stream.req || out.stream.request);
+
+  if (!incomingMessage) {
+    throw new Error("Could not get request from stream.");
+  }
+
+  const url = new URL(input.src, `${incomingMessage.protocol}://${incomingMessage.headers.host}`);
+  const res = await fetch(url, {
+    cachePath,
+    cache: input.cache,
+    headers: {
+      ...incomingMessage.headers,
+      ...input.headers,
+      accept: "text/html",
+    }
+  });
+
+  if (!res.ok) throw new Error(res.statusText);
+  next = createDeferredPromise();
+
+  res.body
+    .on("data", data => {
+      buf += data.toString();
+      if (next) next = next.resolve();
+    })
+    .on("error", err => {
+      if (next) next = next.reject(err);
+      else out.error(err);
+    })
+    .on("end", () => {
+      hasMore = false;
+      if (next) next = next.resolve();
+    });
+
+    return next;
+})();
+
+<div id=loadMarker data-ssr=input.src>
+  <if(loadMarker)>
+    <${input.loading}/>
+    <!-- output a comment used as a marker to detect where the loading content starts so it can be removed -->
+    $!{`<!--${loadMarker}-->`}
+  </if>
+
+  <macro name="wait">
+    <await(next)
+      timeout=input.timeout
+      catch=(!sentData && input.catch)>
+      <@then>
+        $!{buf}
+        <if(hasMore)>
+          $ buf = "";
+          $ sentData = true;
+          $ next = createDeferredPromise();
+          <wait/>
+        </if>
+      </@then>
+    </await>
+  </macro>
+
+  <!--
+  We put the streamed html in a preserved fragment.
+  This allows Marko to avoid diffing that section.
+  -->
+  $ out.bf(input.src, component, true);
+  <wait/>
+  $ out.ef();
+
+  <if(loadMarker)>
+    <!-- Remove all of the <@loading> content after we've received all the data -->
+    $ out.script(`((e,t,d)=>{t=document.getElementById(e);do{t.removeChild(d=t.firstChild)}while(d.data!==e)})("${loadMarker}");`);
+  </if>
+</div>

@@ -1,0 +1,16 @@
+class {
+  onCreate() {
+    this.state = { mounted: false, open: true };
+  }
+  onMount() {
+    this.state.mounted = true;
+  }
+  toggle() {
+    this.state.open = !this.state.open;
+  }
+}
+
+<button onClick("toggle")>Toggle</button>
+<if(state.mounted && state.open)>
+  <micro-frame src="embed"/>
+</if>

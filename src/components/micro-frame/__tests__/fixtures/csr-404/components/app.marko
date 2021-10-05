@@ -1,0 +1,16 @@
+class {
+  onCreate() {
+    this.state = { mounted: false };
+  }
+  onMount() {
+    this.state.mounted = true;
+  }
+}
+
+<if(state.mounted)>
+  <micro-frame src="missing">
+    <@catch|err|>
+      Error: ${err.message}
+    </@catch>
+  </micro-frame>
+</if>

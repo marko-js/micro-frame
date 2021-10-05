@@ -1,0 +1,54 @@
+{
+  "autocomplete": [
+    {
+      "displayText": "micro-frame src=\"<src>\"",
+      "description": "Loads an embedded HTML resource in the existing page.",
+      "snippet": "micro-frame src=\"${1:src}\"",
+      "descriptionMoreURL": "https://github.com/marko-js/micro-frame"
+    }
+  ],
+  "@src": {
+    "type": "string",
+    "required": true,
+    "autocomplete": [
+      {
+        "description": "A relative URL to an HTML resource"
+      }
+    ]
+  },
+  "@timeout": {
+    "type": "number",
+    "autocomplete": [
+      {
+        "description": "An idle timeout in ms after which the request is ended (default 30 seconds)"
+      }
+    ]
+  },
+  "@cache": {
+    "enum": ["default", "no-store", "reload", "force-cache", "only-if-cached"],
+    "autocomplete": [
+      {
+        "description": "A string indicating how the request will interact with the HTTP cache.",
+        "descriptionMoreURL": "https://developer.mozilla.org/en-US/docs/Web/API/Request/cache"
+      }
+    ]
+  },
+  "@catch <catch>": {
+    "attributes": {},
+    "autocomplete": [
+      {
+        "displayText": "@catch|<err>|",
+        "description": "A block rendered when the resource fails to load",
+        "snippet": "@catch|${1:err}|"
+      }
+    ]
+  },
+  "@loading <loading>": {
+    "attributes": {},
+    "autocomplete": [
+      {
+        "description": "A block rendered while the resource is loading and removed after loading is complete"
+      }
+    ]
+  }
+}

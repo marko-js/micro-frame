@@ -1,0 +1,12 @@
+class {
+  onCreate() {
+    this.state = { mounted: false };
+  }
+  onMount() {
+    this.state.mounted = true;
+  }
+}
+
+<if(state.mounted)>
+  <micro-frame src="embed"/>
+</if>
