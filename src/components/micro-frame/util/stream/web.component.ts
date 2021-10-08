@@ -14,27 +14,22 @@ interface State {
   err: undefined | Error;
 }
 
-export = class {
-  input!: Input;
-  state!: State;
-  el!: HTMLDivElement;
-  src: string | undefined;
-  controller?: AbortController;
+export = {
   onCreate() {
     this.state = {
       loading: false,
       err: undefined,
     };
-  }
+  },
   onMount() {
     // Only trigger a new load if this wasn't ssr'd, or the src has changed.
     this.src = this.el.dataset.ssr;
     this.el.removeAttribute("data-ssr");
     this.onUpdate();
-  }
+  },
   onDestroy() {
     this.controller?.abort();
-  }
+  },
   async onUpdate() {
     if (this.src === this.input.src) return;
 
@@ -48,10 +43,7 @@ export = class {
       const res = await fetch(this.src, {
         cache: this.input.cache,
         signal: controller.signal,
-        headers: {
-          ...this.input.headers,
-          accept: "text/html",
-        },
+        headers: Object.assign({}, this.input.headers, { accept: "text/html" }),
       });
       if (!res.ok) throw new Error(res.statusText);
       const reader = res.body!.getReader();
@@ -79,5 +71,15 @@ export = class {
         if (!this.input.catch) throw err;
       }
     }
-  }
+  },
+} as {
+  input: Input;
+  state: State;
+  el: HTMLDivElement;
+  src: string | undefined;
+  controller: AbortController | undefined;
+  onUpdate(): unknown;
+  onCreate(): unknown;
+  onMount(): unknown;
+  onDestroy(): unknown;
 };

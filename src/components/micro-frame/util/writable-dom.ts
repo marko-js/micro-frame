@@ -1,16 +1,14 @@
 type Options = {
   target: ParentNode;
   previousSibling?: ChildNode | null;
-  signal?: AbortSignal;
-  onLoad?(): void;
+  signal: AbortSignal;
+  onLoad(): void;
 };
-
-const noop = () => {};
 
 export = function toWritable({
   target,
   signal,
-  onLoad = noop,
+  onLoad,
   previousSibling,
 }: Options) {
   const doc = document.implementation.createHTMLDocument("");
@@ -19,7 +17,6 @@ export = function toWritable({
   const walker = doc.createTreeWalker(root);
   const targetNodes = new WeakMap<Node, Node>([[root, target]]);
   const nextSibling = previousSibling ? previousSibling.nextSibling : null;
-  const canContinue = () => !(signal && signal.aborted);
   let pendingText: Text | null = null;
   let scanNode: Node | null = null;
   let isBlocked = false;
@@ -27,14 +24,14 @@ export = function toWritable({
 
   return {
     close() {
-      if (canContinue()) {
+      if (!signal.aborted) {
         doc.close();
         isClosed = true;
         if (!isBlocked) onLoad();
       }
     },
     write(chunk: string) {
-      if (canContinue()) {
+      if (!signal.aborted) {
         doc.write(chunk);
 
         if (pendingText) {
@@ -78,7 +75,7 @@ export = function toWritable({
             clone.onload = clone.onerror = () => {
               isBlocked = false;
               // Continue the normal content injecting walk.
-              if (canContinue()) walk();
+              if (!signal.aborted) walk();
             };
           }
         }
