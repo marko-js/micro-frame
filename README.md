@@ -10,7 +10,7 @@
   </a>
   <!-- Coverage -->
   <a href="https://codecov.io/gh/marko-js/micro-frame">
-    <img src="https://codecov.io/gh/marko-js/micro-frame/branch/master/graph/badge.svg?token=cSvMDikbE4"/>
+    <img src="https://codecov.io/gh/marko-js/micro-frame/branch/main/graph/badge.svg?token=cSvMDikbE4"/>
   </a>
   <!-- NPM Version -->
   <a href="https://npmjs.org/package/@micro-frame/marko">
