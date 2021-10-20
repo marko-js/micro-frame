@@ -1,4 +1,4 @@
-import getWritableDOM from "../writable-dom";
+import getWritableDOM from "writable-dom";
 
 interface Input {
   src: string;
@@ -38,6 +38,8 @@ export = {
     this.state.err = undefined;
     this.src = this.input.src;
     const controller = (this.controller = new AbortController());
+    let writable: ReturnType<typeof getWritableDOM> | undefined;
+    let err: Error | undefined;
 
     try {
       const res = await fetch(this.src, {
@@ -48,28 +50,27 @@ export = {
       if (!res.ok) throw new Error(res.statusText);
       const reader = res.body!.getReader();
       const decoder = new TextDecoder();
-      const writable = getWritableDOM({
-        target: this.el,
-        signal: controller.signal,
+      writable = getWritableDOM(
+        this.el,
         // references the start of the preserved Marko fragment.
-        previousSibling: this.el.lastChild!.previousSibling,
-        onLoad: () => {
-          this.state.loading = false;
-        },
-      });
+        this.el.lastChild!.previousSibling
+      );
 
       let value: Uint8Array | undefined;
       while ((value = (await reader.read()).value)) {
         writable.write(decoder.decode(value));
       }
 
-      writable.close();
-    } catch (err) {
-      if (controller === this.controller) {
-        this.state.loading = false;
-        this.state.err = err as Error;
-        if (!this.input.catch) throw err;
-      }
+      await writable.close();
+    } catch (_err) {
+      err = _err as Error;
+      writable?.abort(err);
+    }
+
+    if (controller === this.controller) {
+      if (err && !this.input.catch) throw err;
+      this.state.loading = false;
+      this.state.err = err;
     }
   },
 } as {

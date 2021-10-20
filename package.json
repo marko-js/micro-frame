@@ -5,7 +5,8 @@
   "author": "Dylan Piercey <dpiercey@ebay.com>",
   "bugs": "https://github.com/marko-js/micro-frame/issues",
   "dependencies": {
-    "make-fetch-happen": "^9.1.0"
+    "make-fetch-happen": "^9.1.0",
+    "writable-dom": "^1.0.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^13.2.0",
