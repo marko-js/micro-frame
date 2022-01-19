@@ -16,6 +16,14 @@
       }
     ]
   },
+  "@headers": {
+    "type": "object",
+    "autocomplete": [
+      {
+        "description": "Additional http headers to send"
+      }
+    ]
+  },
   "@timeout": {
     "type": "number",
     "autocomplete": [
