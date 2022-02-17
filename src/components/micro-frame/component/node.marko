@@ -31,6 +31,7 @@ $ let next = (async () => {
   const res = await fetch(url, {
     cachePath,
     cache: input.cache,
+    strictSSL: process.env.NODE_TLS_REJECT_UNAUTHORIZED !== "0",
     headers: {
       ...incomingMessage.headers,
       ...input.headers,
