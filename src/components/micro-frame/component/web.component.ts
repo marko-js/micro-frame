@@ -16,15 +16,22 @@ interface State {
 
 export = {
   onCreate() {
+    const ssrEl = document.getElementById(this.id);
+    let loading = true;
+    if (ssrEl) {
+      this.src = ssrEl.dataset.src;
+      ssrEl.removeAttribute("data-src");
+      ssrEl.removeAttribute("id");
+      loading = false;
+    }
+
     this.state = {
-      loading: false,
+      loading,
       err: undefined,
     };
   },
   onMount() {
     // Only trigger a new load if this wasn't ssr'd, or the src has changed.
-    this.src = this.el.dataset.ssr;
-    this.el.removeAttribute("data-ssr");
     this.onUpdate();
   },
   onDestroy() {
@@ -74,6 +81,7 @@ export = {
     }
   },
 } as {
+  id: string;
   input: Input;
   state: State;
   el: HTMLDivElement;

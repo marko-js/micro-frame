@@ -1,14 +1,9 @@
 <div>
-  <if(state.err)>
-    <${input.catch}(state.err)/>
-  </if>
-  <else>
-    <${state.loading && input.loading}/>
+  <${state.err ? input.catch : state.loading ? input.loading : () => {}}(state.err)/>
 
-    <!--
-    We put the streamed html in a preserved fragment.
-    This allows Marko to avoid diffing that section.
-    -->
-    $ out.bf(input.src, component, true).ef();
-  </else>
+  <!--
+  We put the streamed html in a preserved fragment.
+  This allows Marko to avoid diffing that section.
+  -->
+  $ out.bf("@_", component, !state.err).ef();
 </div>

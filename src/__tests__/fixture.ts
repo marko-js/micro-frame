@@ -24,8 +24,6 @@ export default (dir: string, step?: Step[] | Step) => {
         await waitForPendingRequests(page, () => page.goto(app!.url));
         await forEachChange((html, i) => snap(html, `loading.${i}.html`));
 
-        await page.pause();
-
         for (const [i, step] of steps.entries()) {
           await waitForPendingRequests(page, step);
           await forEachChange((html, j) => snap(html, `step-${i}.${j}.html`));
@@ -128,6 +126,7 @@ async function waitForPendingRequests(page: playwright.Page, step: Step) {
 
   try {
     addOne();
+    await page.pause();
     await step(page);
     finishOne();
     await pending;

@@ -2,8 +2,6 @@ import path from "path";
 import fetch from "make-fetch-happen";
 
 static const cachePath = path.resolve("node_modules/.cache/fetch");
-static const loadKey = Symbol();
-
 static function createDeferredPromise() {
   let resolve;
   let reject;
@@ -19,7 +17,6 @@ static function createDeferredPromise() {
 $ let buf = "";
 $ let hasMore = true;
 $ let sentData = false;
-$ let loadMarker = input.loading && `$mf${(out.global[loadKey] = (out.global[loadKey] || 0) + 1).toString(36)}`;
 $ let next = (async () => {
   const incomingMessage = out.stream && (out.stream.req || out.stream.request);
 
@@ -59,11 +56,11 @@ $ let next = (async () => {
     return next;
 })();
 
-<div id=loadMarker data-ssr=input.src>
-  <if(loadMarker)>
+<div id=component.id data-src=input.src>
+  <if(input.loading)>
     <${input.loading}/>
     <!-- output a comment used as a marker to detect where the loading content starts so it can be removed -->
-    $!{`<!--${loadMarker}-->`}
+    $!{`<!--${component.id}-->`}
   </if>
 
   <macro name="wait">
@@ -86,12 +83,12 @@ $ let next = (async () => {
   We put the streamed html in a preserved fragment.
   This allows Marko to avoid diffing that section.
   -->
-  $ out.bf(input.src, component, true);
+  $ out.bf("@_", component, true);
   <wait/>
   $ out.ef();
 
-  <if(loadMarker)>
+  <if(input.loading)>
     <!-- Remove all of the <@loading> content after we've received all the data -->
-    $ out.script(`((e,t,d)=>{t=document.getElementById(e);do{t.removeChild(d=t.firstChild)}while(d.data!==e)})("${loadMarker}");`);
+    $ out.script(`((e,t,d)=>{t=document.getElementById(e);do{t.removeChild(d=t.firstChild)}while(d.data!==e)})(${JSON.stringify(component.id)});`);
   </if>
 </div>
