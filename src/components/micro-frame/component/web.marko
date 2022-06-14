@@ -1,9 +1,16 @@
-<div>
-  <${state.err ? input.catch : state.loading ? input.loading : () => {}}(state.err)/>
+static function noop() {}
 
+<div>
+  <${
+    state.err
+      ? input.catch || noop
+      : state.loading
+      ? input.loading || noop
+      : noop
+  }(state.err)/>
   <!--
   We put the streamed html in a preserved fragment.
   This allows Marko to avoid diffing that section.
   -->
-  $ out.bf("@_", component, !state.err).ef();
+  $ out.bf("@_", component, !state.err && component.src === input.src).ef();
 </div>
