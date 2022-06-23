@@ -1,0 +1,59 @@
+{
+  "autocomplete": [
+    {
+      "displayText": "micro-frame-sse src=\"<src>\" read(e) { return [] }",
+      "snippet": "micro-frame-sse src=\"${1:src}\" read(e) { return [] }"
+    }
+  ],
+  "@src": {
+    "type": "string",
+    "required": true,
+    "autocomplete": [
+      {
+        "description": "A relative URL to an HTML resource"
+      }
+    ]
+  },
+  "@method": {
+    "type": "string",
+    "autocomplete": [
+      {
+        "description": "SSE request method"
+      }
+    ]
+  },
+  "@body": {
+    "type": "object",
+    "autocomplete": [
+      {
+        "description": "SSE request body"
+      }
+    ]
+  },
+  "@headers": {
+    "type": "object",
+    "autocomplete": [
+      {
+        "description": "Additional http headers to send"
+      }
+    ]
+  },
+  "@name": {
+    "type": "string",
+    "required": true,
+    "autocomplete": [
+      {
+        "description": "Unique name"
+      }
+    ]
+  },
+  "@read": {
+    "type": "function",
+    "required": true,
+    "autocomplete": [
+      {
+        "description": "Function to transform data"
+      }
+    ]
+  }
+}

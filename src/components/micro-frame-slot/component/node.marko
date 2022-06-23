@@ -1,0 +1,15 @@
+$ const sourceName = input.from;
+$ {
+    if (
+        !(out.global.micro_frame_sse instanceof Map) ||
+        !out.global.micro_frame_sse.has(sourceName)
+    )
+        throw new Error(`micro-frame-sse ${sourceName} is not defined.`);
+}
+$ const streamSource = out.global.micro_frame_sse.get(sourceName);
+$ const streamSlot = streamSource.slot(input.slotId);
+$ const stream = streamSlot.stream;
+
+$ out.bf("@_", component, true);
+<micro-frame-stream stream=stream ...input/>
+$ out.ef();

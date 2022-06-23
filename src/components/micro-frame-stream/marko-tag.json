@@ -1,0 +1,11 @@
+{
+  "@stream": {
+    "type": "object",
+    "required": true,
+    "autocomplete": [
+      {
+        "description": "AsyncGenerator object"
+      }
+    ]
+  }
+}

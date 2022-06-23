@@ -1,0 +1,19 @@
+{
+  "@slotId": {
+    "type": "string",
+    "required": true,
+    "autocomplete": [
+      {
+        "description": "Slot ID"
+      }
+    ]
+  },
+  "@from": {
+    "type": "string",
+    "autocomplete": [
+      {
+        "description": "Match micro-frame-sse name attribute"
+      }
+    ]
+  }
+}

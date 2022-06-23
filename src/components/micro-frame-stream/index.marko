@@ -1,0 +1,12 @@
+<macro name="wait">
+  <await(input.stream.next()) client-reorder timeout=input.timeout>
+    <@then|{ value, done }|>
+      $!{value}
+      <if(!done)>
+        <wait/>
+      </if>
+    </@then>
+  </await>
+</macro>
+
+<wait/>
