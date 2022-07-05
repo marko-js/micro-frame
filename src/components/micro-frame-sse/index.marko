@@ -1,8 +1,31 @@
-import sseComponent from "./component";
+$ const sseParser = (readable) => async function* parser() {
+    for await (const buf of readable) {
+        const events = buf.toString().split('\n\n').filter(Boolean);
+        for (const eventStr of events) {
+            let data = '';
+            let id;
+            let type;
+            const lines = eventStr.split('\n').filter(Boolean);
+            const idRegEx = /^id: (.*?)$/;
+            const dataRegEx = /^data: (.*?)$/;
+            const typeRegEx = /^type: (.*?)$/;
+            for (const l of lines) {
+                const idRes = idRegEx.exec(l);
+                if (idRes) {
+                    id = idRes[1];
+                }
 
-// We have a proxy to the top level component
-// so that we can swap it out using `package.json#browser`.
-// https://gist.github.com/defunctzombie/4339901/49493836fb873ddaa4b8a7aa0ef2352119f69211
-// This allows us to have entirely different streaming implementations
-// depending on if this component is used in the server or browser.
-<${sseComponent} ...input/>
+                const typeRes = typeRegEx.exec(l);
+                if (typeRes) {
+                    type = typeRes[1];
+                }
+
+                const dataRes = dataRegEx.exec(l);
+                data += dataRes ? dataRes[1] : '';
+            }
+            yield input.read({lastEventId: id, data, type});
+        }
+    }
+};
+
+<stream-source parser=sseParser ...input />

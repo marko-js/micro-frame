@@ -1,0 +1,28 @@
+import fetch from "make-fetch-happen";
+import StreamSource from "./StreamSource";
+$ (async function run() {
+  const name = input.name;
+  if (out.global.micro_frame_sse instanceof Map) {
+    if (out.global.micro_frame_sse.has(name)) {
+      throw new Error(`micro-frame-sse ${name} already exists.`);
+    }
+  } else {
+    out.global.micro_frame_sse = new Map();
+  }
+  const streamSource = new StreamSource();
+  out.global.micro_frame_sse.set(name, streamSource);
+
+  const res = await fetch(input.src, {
+    method: input.method || "get",
+    body: JSON.stringify(input.body),
+    strictSSL: process.env.NODE_TLS_REJECT_UNAUTHORIZED !== "0",
+    headers: input.headers,
+  });
+
+  if (!res.ok) throw new Error(res.statusText);
+
+  const parserGenerator = input.parser(res.body);
+  streamSource.run(parserGenerator(), {
+    closeAfterRead: true,
+  });
+})()
