@@ -14,12 +14,12 @@ class StreamSource {
   }
 
   async run(
-    parserIterator: AsyncGenerator<string[]>,
+    parserIterator: () => AsyncGenerator<string[]>,
     opts?: {
       closeAfterRead?: boolean;
     }
   ) {
-    for await (const [slotId, html] of parserIterator) {
+    for await (const [slotId, html] of parserIterator()) {
       if (!slotId) throw new Error("[Parser Iterator] Invalid Slot ID");
 
       const slot = this.getOrCreateSlot(slotId);

@@ -1,25 +1,42 @@
 $ const sourceName = input.from;
 $ {
     if (
-        !(out.global.micro_frame_sse instanceof Map) ||
-        !out.global.micro_frame_sse.has(sourceName)
+        !(out.global.micro_frame_sources instanceof Map) ||
+        !out.global.micro_frame_sources.has(sourceName)
     )
         throw new Error(`micro-frame-sse ${sourceName} is not defined.`);
 }
-$ const streamSource = out.global.micro_frame_sse.get(sourceName);
+$ const streamSource = out.global.micro_frame_sources.get(sourceName);
 $ const streamSlot = streamSource.slot(input.slotId);
 $ const stream = streamSlot.stream;
 
-<macro name="wait">
-    <await(stream.next()) client-reorder timeout=input.timeout>
-        <@then|{ value, done }|>
-            $!{value}
-            <if(!done)>
-                <wait/>
-            </if>
-        </@then>
-    </await>
-</macro>
-$ out.bf("@_", component, true);
-<wait/>
-$ out.ef();
+<div id=component.id data-slot-id=input.slotId data-from=input.from>
+    <if(input.loading)>
+        <${input.loading}/>
+        <!-- output a comment used as a marker to detect where the loading content starts so it can be removed -->
+        $!{`<!--${component.id}-->`}
+    </if>
+
+    <macro name="wait">
+        <await(stream.next()) client-reorder timeout=input.timeout>
+            <@then|{ value, done }|>
+                $!{value}
+                <if(!done)>
+                    <wait/>
+                </if>
+            </@then>
+        </await>
+    </macro>
+    $ out.bf("@_", component, true);
+    <wait/>
+    $ out.ef();
+
+    <if(input.loading)>
+        <!-- Remove all of the <@loading> content after we've received all the data -->
+        $ out.script(
+            `((e,t,d)=>{t=document.getElementById(e);do{t.removeChild(d=t.firstChild)}while(d.data!==e)})(${JSON.stringify(
+                component.id
+            )});`
+        );
+    </if>
+</div>
