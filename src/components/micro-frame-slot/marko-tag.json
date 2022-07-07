@@ -16,6 +16,16 @@
       }
     ]
   },
+  "@catch <catch>": {
+    "attributes": {},
+    "autocomplete": [
+      {
+        "displayText": "@catch|<err>|",
+        "description": "A block rendered when the resource fails to load",
+        "snippet": "@catch|${1:err}|"
+      }
+    ]
+  },
   "@loading <loading>": {
     "attributes": {},
     "autocomplete": [

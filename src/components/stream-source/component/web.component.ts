@@ -52,18 +52,7 @@ export = {
     this.controller?.abort();
   },
   async onUpdate() {
-    if (this.src === this.input.src) return;
-
-    if (!((window as any).micro_frame_sources instanceof Map)) {
-      (window as any).micro_frame_sources = new Map();
-    }
-
-    const sourceMap: Map<string, StreamSource> = (window as any)
-      .micro_frame_sources;
-
-    if (sourceMap.has(this.input.name)) sourceMap.get(this.input.name)?.close();
-    const streamSource = new StreamSource();
-    sourceMap.set(this.input.name, streamSource);
+    if (this.src === this.input.src || !this.streamSource) return;
 
     this.controller?.abort();
     this.state.loading = true;
@@ -82,9 +71,10 @@ export = {
       });
       if (!res.ok) throw new Error(res.statusText);
       const readable = readableToGenerator(res.body!);
-      await streamSource.run(this.input.parser(readable));
+      await this.streamSource.run(this.input.parser(readable));
     } catch (_err) {
       err = _err as Error;
+      this.streamSource.close(err);
     }
 
     if (controller === this.controller) {
@@ -97,6 +87,7 @@ export = {
   id: string;
   input: Input;
   state: State;
+  streamSource: StreamSource;
   el: HTMLDivElement;
   src: string | undefined;
   method: string | undefined;

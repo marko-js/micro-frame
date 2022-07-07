@@ -1,7 +1,8 @@
 import StreamGenerator from "./StreamGenerator";
 
 class StreamSource {
-  // Add index signature for low version babel compatibility
+  // Using index signature instead of defining property
+  // for low babel version compatibility
   [x: string]: any;
 
   private getOrCreateSlot(id: string): StreamGenerator {
@@ -32,9 +33,8 @@ class StreamSource {
     return this.getOrCreateSlot(id);
   }
 
-  close() {
-    this._slots.forEach((slot: StreamGenerator) => slot.done());
-    this._slots.clear();
+  close(err?: Error) {
+    this._slots.forEach((slot: StreamGenerator) => slot.done(err));
   }
 }
 

@@ -13,7 +13,8 @@ class StreamGenerator {
   private _next: DeferredPrimise = StreamGenerator.createDeferredPromise();
   private _status: StreamStatus = StreamStatus.ACTIVE;
   private _buffer: string[] = [];
-  private _stream: AsyncGenerator;
+  private _err?: Error;
+  private _stream: AsyncGenerator<string>;
 
   private static createDeferredPromise() {
     const deferred: DeferredPrimise = {};
@@ -30,8 +31,12 @@ class StreamGenerator {
 
       this._next = StreamGenerator.createDeferredPromise();
 
+      if (this._err) {
+        throw this._err;
+      }
+
       while (this._buffer.length) {
-        yield this._buffer.shift();
+        yield this._buffer.shift() as string;
       }
     }
   }
@@ -55,7 +60,8 @@ class StreamGenerator {
     }
   }
 
-  done() {
+  done(err?: Error) {
+    this._err = err;
     this._status = StreamStatus.CLOSED;
     this._next.resolve && this._next.resolve();
   }
