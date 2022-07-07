@@ -1,21 +1,17 @@
 import fetch from "make-fetch-happen";
 import StreamSource from "./StreamSource";
 $ {
-  const name = input.name;
-  if (out.global.micro_frame_sources instanceof Map) {
-    if (out.global.micro_frame_sources.has(name)) {
-      throw new Error(`micro-frame-sse ${name} already exists.`);
-    }
-  } else {
+  if (!(out.global.micro_frame_sources instanceof Map)) {
     out.global.micro_frame_sources = new Map();
   }
-  out.global.micro_frame_sources.set(name, new StreamSource());
+  out.global.micro_frame_sources.set(input.name, new StreamSource());
 }
 
 $ const request = async () => {
   const res = await fetch(input.src, {
-    method: input.method || "get",
+    method: input.method,
     body: JSON.stringify(input.body),
+    cache: input.cache,
     strictSSL: process.env.NODE_TLS_REJECT_UNAUTHORIZED !== "0",
     headers: input.headers,
   })
@@ -26,10 +22,13 @@ $ const request = async () => {
 }
 $ const streamSource = out.global.micro_frame_sources.get(input.name);
 
-$ out.bf("@_", component, true);
-<await(request()) catch=input.catch>
-  <@then|{ body }|>
-    $ streamSource.run(input.parser(body), { closeAfterRead: true });
-  </@then>
-</await>
-$ out.ef();
+<div id=component.id data-src=input.src>
+  $ out.bf("@_", component, true);
+  <await(request()) catch=input.catch>
+    <@then|{ body }|>
+      $ streamSource.run(input.parser(body));
+    </@then>
+  </await>
+  $ out.ef();
+</div>
+

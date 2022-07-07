@@ -1,4 +1,4 @@
-$ const sseParser = (readable) => async function* parser() {
+$ async function* parser(readable) {
     for await (const buf of readable) {
         const events = buf.toString().split('\n\n').filter(Boolean);
         for (const eventStr of events) {
@@ -28,4 +28,4 @@ $ const sseParser = (readable) => async function* parser() {
     }
 };
 
-<stream-source parser=sseParser ...input />
+<stream-source parser=parser ...input />

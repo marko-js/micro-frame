@@ -1,7 +1,8 @@
 import StreamGenerator from "./StreamGenerator";
 
 class StreamSource {
-  private readonly _slots: Map<string, StreamGenerator> = new Map();
+  // Add index signature for low version babel compatibility
+  [x: string]: any;
 
   private getOrCreateSlot(id: string): StreamGenerator {
     if (this._slots.has(id)) {
@@ -13,19 +14,18 @@ class StreamSource {
     return newSlot;
   }
 
-  async run(
-    parserIterator: () => AsyncGenerator<string[]>,
-    opts?: {
-      closeAfterRead?: boolean;
-    }
-  ) {
-    for await (const [slotId, html] of parserIterator()) {
+  constructor() {
+    this._slots = new Map();
+  }
+
+  async run(parserIterator: AsyncGenerator<string[]>) {
+    for await (const [slotId, html] of parserIterator) {
       if (!slotId) throw new Error("[Parser Iterator] Invalid Slot ID");
 
       const slot = this.getOrCreateSlot(slotId);
       slot.push(html);
-      opts?.closeAfterRead && slot.done();
     }
+    this.close();
   }
 
   slot(id: string) {
@@ -33,7 +33,7 @@ class StreamSource {
   }
 
   close() {
-    this._slots.forEach((slot) => slot.done());
+    this._slots.forEach((slot: StreamGenerator) => slot.done());
     this._slots.clear();
   }
 }
