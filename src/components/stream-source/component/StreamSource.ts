@@ -1,9 +1,7 @@
 import StreamGenerator from "./StreamGenerator";
 
 class StreamSource {
-  // Using index signature instead of defining property
-  // for low babel version compatibility
-  [x: string]: any;
+  private readonly _slots: Map<string, StreamGenerator>;
 
   private getOrCreateSlot(id: string): StreamGenerator {
     if (this._slots.has(id)) {

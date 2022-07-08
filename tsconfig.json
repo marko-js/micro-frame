@@ -16,6 +16,7 @@
     "preserveConstEnums": true,
     "emitDeclarationOnly": true,
     "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "useDefineForClassFields": false
   }
 }
