@@ -66,6 +66,15 @@
       }
     ]
   },
+  "@fetch": {
+    "type": "function",
+    "required": false,
+    "autocomplete": [
+      {
+        "description": "Customized fetch function"
+      }
+    ]
+  },
   "@read": {
     "type": "function",
     "required": true,

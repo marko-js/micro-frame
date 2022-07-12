@@ -1,0 +1,9 @@
+$ const { assets } = out.global;
+
+<for|file| of=assets[".css"] || []>
+  <link rel="stylesheet" href=`/${file.path}`/>
+</for>
+
+<for|file| of=assets[".js"] || []>
+  <script async type="module" src=`/${file.path}`/>
+</for>

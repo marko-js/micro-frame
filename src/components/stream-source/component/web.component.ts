@@ -2,6 +2,7 @@ import StreamSource from "./StreamSource";
 
 interface Input {
   src: string;
+  fetch?(input: RequestInfo, init?: RequestInit): Promise<Response>;
   name: string;
   parser(readable: AsyncGenerator): AsyncGenerator<string[]>;
   method?: string;
@@ -62,7 +63,7 @@ export = {
     let err: Error | undefined;
 
     try {
-      const res = await fetch(this.input.src, {
+      const res = await (this.input.fetch || fetch)(this.input.src, {
         method: this.input.method,
         body: JSON.stringify(this.input.body),
         headers: this.input.headers,

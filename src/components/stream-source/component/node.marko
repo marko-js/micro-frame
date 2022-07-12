@@ -19,7 +19,7 @@ $ const request = async () => {
   }
 
   const url = new URL(input.src, `${incomingMessage.protocol}://${incomingMessage.headers.host}`);
-  const res = await fetch(url, {
+  const res = await (input.fetch || fetch)(url, {
     method: input.method,
     body: input.body,
     cachePath,
