@@ -1,7 +1,5 @@
 import StreamSource from "./StreamSource";
 
-static function noop() {}
-
 $ {
   if (!(window.micro_frame_sources instanceof Map)) {
     window.micro_frame_sources = new Map();
@@ -16,16 +14,9 @@ $ {
 }
 
 <div>
-  <${
-    state.err
-      ? input.catch || noop
-      : state.loading
-      ? input.loading || noop
-      : noop
-  }(state.err)/>
   <!--
   We put the streamed html in a preserved fragment.
   This allows Marko to avoid diffing that section.
   -->
-  $ out.bf("@_", component, !state.err && component.src === input.src).ef();
+  $ out.bf("@_", component, component.src === input.src).ef();
 </div>

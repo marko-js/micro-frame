@@ -7,16 +7,9 @@ interface Input {
   parser(readable: AsyncGenerator): AsyncGenerator<string[]>;
   method?: string;
   body?: JSON;
-  catch?: unknown;
   timeout?: number;
-  loading?: unknown;
   cache?: RequestCache;
   headers?: Record<string, string>;
-}
-
-interface State {
-  loading: boolean;
-  err: undefined | Error;
 }
 
 async function* readableToGenerator(readable: ReadableStream) {
@@ -32,18 +25,11 @@ async function* readableToGenerator(readable: ReadableStream) {
 export = {
   onCreate() {
     const ssrEl = document.getElementById(this.id);
-    let loading = true;
     if (ssrEl) {
       this.src = ssrEl.dataset.src;
       ssrEl.removeAttribute("data-src");
       ssrEl.removeAttribute("id");
-      loading = false;
     }
-
-    this.state = {
-      loading,
-      err: undefined,
-    };
   },
   onMount() {
     // Only trigger a new load if this wasn't ssr'd, or the src has changed.
@@ -56,8 +42,6 @@ export = {
     if (this.src === this.input.src || !this.streamSource) return;
 
     this.controller?.abort();
-    this.state.loading = true;
-    this.state.err = undefined;
     this.src = this.input.src;
     const controller = (this.controller = new AbortController());
     let err: Error | undefined;
@@ -77,17 +61,10 @@ export = {
       err = _err as Error;
       this.streamSource.close(err);
     }
-
-    if (controller === this.controller) {
-      if (err && !this.input.catch) throw err;
-      this.state.loading = false;
-      this.state.err = err;
-    }
   },
 } as {
   id: string;
   input: Input;
-  state: State;
   streamSource: StreamSource;
   el: HTMLDivElement;
   src: string | undefined;

@@ -2,7 +2,7 @@ static function noop() {}
 
 $ const streamSource = window.micro_frame_sources && window.micro_frame_sources.get(input.from);
 $ if (!streamSource) throw new Error(`Stream Source ${input.from} is not defined`);
-$ component.slot = streamSource.slot(input.slotId);
+$ component.slot = streamSource.slot(input.slot);
 
 <div>
   <${
@@ -16,5 +16,5 @@ $ component.slot = streamSource.slot(input.slotId);
   We put the streamed html in a preserved fragment.
   This allows Marko to avoid diffing that section.
   -->
-  $ out.bf("@_", component, !state.err && component.slotId === input.slotId && component.from === input.from).ef();
+  $ out.bf("@_", component, !state.err && component.slotId === input.slot && component.from === input.from).ef();
 </div>

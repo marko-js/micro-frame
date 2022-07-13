@@ -13,6 +13,6 @@ class {
 <button onClick("toggle")>Toggle</button>
 <if(state.mounted && state.open)>
   <micro-frame-sse src="embed" name="test" read(e) { return [e.lastEventId, e.data] } />
-  <micro-frame-slot from="test" slotId="slot_1" />
-  <micro-frame-slot from="test" slotId="slot_2" />
+  <micro-frame-slot from="test" slot="slot_1" />
+  <micro-frame-slot from="test" slot="slot_2" />
 </if>

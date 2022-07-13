@@ -2,7 +2,7 @@ import StreamGenerator from "../../stream-source/component/StreamGenerator";
 import getWritableDOM from "writable-dom";
 
 interface Input {
-  slotId: string;
+  slot: string;
   from: string;
   catch?: unknown;
   timeout?: number;
@@ -21,9 +21,9 @@ export = {
     const ssrEl = document.getElementById(this.id);
     let loading = true;
     if (ssrEl) {
-      this.slotId = ssrEl.dataset.slotId;
+      this.slotId = ssrEl.dataset.slot;
       this.from = ssrEl.dataset.from;
-      ssrEl.removeAttribute("data-slot-id");
+      ssrEl.removeAttribute("data-slot");
       ssrEl.removeAttribute("data-from");
       ssrEl.removeAttribute("id");
       loading = false;
@@ -43,14 +43,14 @@ export = {
   },
   async onUpdate() {
     if (
-      (this.slotId === this.input.slotId && this.from === this.input.from) ||
+      (this.slotId === this.input.slot && this.from === this.input.from) ||
       !this.slot
     )
       return;
 
     this.state.loading = true;
     this.state.err = undefined;
-    this.slotId = this.input.slotId;
+    this.slotId = this.input.slot;
     this.from = this.input.from;
 
     let writable: ReturnType<typeof getWritableDOM> | undefined;

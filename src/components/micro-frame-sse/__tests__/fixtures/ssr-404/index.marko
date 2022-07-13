@@ -8,17 +8,13 @@
 </head>
 <body>
   <div>Host app</div>
-  <micro-frame-sse src="missing" name="test" read(e) { return [e.lastEventId, e.data] }>
-    <@catch|err|>
-      SSE Error: ${err.message}
-    </@catch>
-  </micro-frame-sse>
-  <micro-frame-slot from="test" slotId="slot_1">
+  <micro-frame-sse src="missing" name="test" read(e) { return [e.lastEventId, e.data] } />
+  <micro-frame-slot from="test" slot="slot_1">
     <@catch|err|>
       Slot_1 Error: ${err.message}
     </@catch>
   </micro-frame-slot>
-  <micro-frame-slot from="test" slotId="slot_2">
+  <micro-frame-slot from="test" slot="slot_2">
     <@catch|err|>
       Slot_2 Error: ${err.message}
     </@catch>

@@ -11,12 +11,14 @@ enum StreamStatus {
 
 class StreamGenerator {
   private _next: DeferredPrimise = StreamGenerator.createDeferredPromise();
-  private _status: StreamStatus = StreamStatus.ACTIVE;
   private _buffer: string[] = [];
   private _err?: Error;
-  private _stream: AsyncGenerator<string>;
-  private _loadingSignal: DeferredPrimise =
+
+  readonly loadingSignal: DeferredPrimise =
     StreamGenerator.createDeferredPromise();
+  readonly stream: AsyncGenerator<string>;
+
+  status: StreamStatus = StreamStatus.ACTIVE;
 
   private static createDeferredPromise() {
     const deferred: DeferredPrimise = {};
@@ -37,26 +39,16 @@ class StreamGenerator {
         throw this._err;
       }
 
-      while (this._buffer.length) {
-        yield this._buffer.shift() as string;
+      if (this._buffer.length) {
+        const chunk = this._buffer.join("");
+        this._buffer.length = 0;
+        yield chunk;
       }
     }
   }
 
-  get status() {
-    return this._status;
-  }
-
-  get stream() {
-    return this._stream;
-  }
-
-  get loadingSignal() {
-    return this._loadingSignal;
-  }
-
   constructor() {
-    this._stream = this.generator();
+    this.stream = this.generator();
   }
 
   push(data: string) {
@@ -68,9 +60,9 @@ class StreamGenerator {
 
   done(err?: Error) {
     this._err = err;
-    this._status = StreamStatus.CLOSED;
+    this.status = StreamStatus.CLOSED;
     this._next.resolve && this._next.resolve();
-    this._loadingSignal.resolve && this._loadingSignal.resolve();
+    this.loadingSignal.resolve && this.loadingSignal.resolve();
   }
 }
 

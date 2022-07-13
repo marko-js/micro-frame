@@ -40,8 +40,8 @@ Considering SSE is only one kind of streaming formats, `micro-frame` could poten
   read(ev) {
     // assuming data is in JSON format
     const data = JSON.parse(ev.data);
-    const slotId = data.slotId, html = data.content;
-    return [slotId, html];
+    const slot = data.slot, html = data.content;
+    return [slot, html];
   }
 >
   <@catch|err|>
@@ -49,7 +49,7 @@ Considering SSE is only one kind of streaming formats, `micro-frame` could poten
   </@catch>
 </micro-frame-sse>
 
-<micro-frame-slot from="unique_name" slotId="slot_1">
+<micro-frame-slot from="unique_name" slot="slot_1">
   <@loading>
     Loading...
   </@loading>
@@ -62,7 +62,7 @@ content in between
 </div>
 <ul>
   <li>
-    <micro-frame-slot from="unique_name" slotId="slot_2" />
+    <micro-frame-slot from="unique_name" slot="slot_2" />
   </li>
 </ul>
 ```
@@ -87,33 +87,17 @@ A unique name for the stream. A page can have multiple streams.
 
 ## (required) `read`
 
-A function to parse the event which returns slotId and streamed content as an array (optionally an ifDone flag). The input is `MessageEvent`, please refer to [MessageEvent](https://developer.mozilla.org/en-US/docs/Web/API/EventSource/message_event#event_properties) for details.
+A function to parse the event which returns slot ID and streamed content as an array (optionally an ifDone flag). The input is `MessageEvent`, please refer to [MessageEvent](https://developer.mozilla.org/en-US/docs/Web/API/EventSource/message_event#event_properties) for details.
 
 ```marko
 <micro-frame-sse src="..." name="..." read(ev) {
-  // logic to fetch slotId and html_content from event
-  return [slotId, html_content];
+  // logic to fetch slot ID and html_content from event
+  return [slot, html_content];
 
   // if the ifDone flag is set to true, slot will be closed after reading.
   // const ifDone = true;
-  // return [slotId, html_content, ifDone];
+  // return [slot, html_content, ifDone];
 } />
-```
-
-## `method`
-
-Optionally provide method of the http request. Default is `GET`.
-
-```marko
-<micro-frame-sse src="..." name="..." read(...) {...} method="POST" />
-```
-
-## `body`
-
-Optionally provide body of the http request.
-
-```marko
-<micro-frame-sse src="..." name="..." read(...) {...} body=JSON.stringify({data: 'some_data'}) />
 ```
 
 ## `headers`
@@ -171,42 +155,14 @@ This example will disable the default 30s timeout.
 <micro-frame-sse src="..." name="..." read(...) {...} timeout=0/>
 ```
 
-## `<@catch|err|>`
-
-An [attribute tag](https://markojs.com/docs/syntax/#attribute-tag) rendered when there is a network error or timeout.
-If there is no `@catch` handler the error will be emitted to the stream, similar to the [`<await>`](https://markojs.com/docs/core-tags/#await) tag.
-
-```marko
-<micro-frame-sse src="..." name="..." read(...) {...}>
-  <@catch|err|>
-    <!-- Displays if request to service fails or times out -->
-    error: ${err.message}
-  </@catch>
-</micro-frame-sse>
-```
-
-## `<@loading>`
-
-An [attribute tag](https://markojs.com/docs/syntax/#attribute-tag) rendered when while the request is still being streamed.
-It is removed after the request has either errored, or successfully loaded.
-
-```marko
-<micro-frame-slot from="..." slotId="...">
-  <@loading>
-    We are loading the nested app...
-    <my-spinner/>
-  </@loading>
-</micro-frame-slot>
-```
-
 # `<micro-frame-slot>` API
 
-## (required) `slotId`
+## (required) `slot`
 
 Unique ID for the slot which is used to receive streaming content from the SSE.
 
 ```marko
-<micro-frame-slot from="..." slotId="slot_id" />
+<micro-frame-slot from="..." slot="slot_id" />
 ```
 
 ## (required) `from`
@@ -214,17 +170,17 @@ Unique ID for the slot which is used to receive streaming content from the SSE.
 Stream source name matching `name` attribute of `<micro-frame-sse>`.
 
 ```marko
-<micro-frame-slot from="stream-source-name" slotId="..." />
+<micro-frame-slot from="stream-source-name" slot="..." />
 ```
 
 ## `<@catch|err|>`
 
 An [attribute tag](https://markojs.com/docs/syntax/#attribute-tag) rendered when there is a network error or timeout.
-Error happens in `<micro-frame-sse>` will also be emitted to `<micro-frame-slot>` which can be catched here.
+Error happens in `<micro-frame-sse>` will be emitted to `<micro-frame-slot>` which can be catched here.
 If there is no `@catch` handler the error will be emitted to the stream, similar to the [`<await>`](https://markojs.com/docs/core-tags/#await) tag.
 
 ```marko
-<micro-frame-slot from="..." slotId="...">
+<micro-frame-slot from="..." slot="...">
   <@catch|err|>
     error: ${err.message}
   </@catch>
@@ -237,7 +193,7 @@ An [attribute tag](https://markojs.com/docs/syntax/#attribute-tag) rendered when
 It is removed after the request has either errored, or successfully loaded.
 
 ```marko
-<micro-frame-slot from="..." slotId="...">
+<micro-frame-slot from="..." slot="...">
   <@loading>
     We are loading the nested app...
     <my-spinner/>

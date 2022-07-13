@@ -1,5 +1,5 @@
 {
-  "@slotId": {
+  "@slot": {
     "type": "string",
     "required": true,
     "autocomplete": [

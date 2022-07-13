@@ -9,6 +9,6 @@ class {
 
 <if(state.mounted)>
   <micro-frame-sse src="embed" name="test" read(e) { return [e.lastEventId, e.data] } />
-  <micro-frame-slot from="wrong_sroucename" slotId="slot_1" />
-  <micro-frame-slot from="test" slotId="slot_2" />
+  <micro-frame-slot from="wrong_sroucename" slot="slot_1" />
+  <micro-frame-slot from="test" slot="slot_2" />
 </if>
