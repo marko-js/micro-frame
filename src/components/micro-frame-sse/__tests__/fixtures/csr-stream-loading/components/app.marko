@@ -8,7 +8,7 @@ class {
 }
 
 <if(state.mounted)>
-  <micro-frame-sse src="embed" name="test" read(e) { return [e.lastEventId, e.data] } />
+  <micro-frame-sse src="embed" name="test" />
   <micro-frame-slot from="test" slot="slot_1">
     <@loading>
       Loading...

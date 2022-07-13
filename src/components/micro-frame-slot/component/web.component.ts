@@ -63,7 +63,7 @@ export = {
         this.el.lastChild!.previousSibling
       );
 
-      const stream = this.slot?.stream;
+      const stream = this.slot!.stream;
       for await (const html of stream!) {
         writable.write(html);
       }

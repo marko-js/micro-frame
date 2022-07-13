@@ -51,7 +51,7 @@
   },
   "@read": {
     "type": "function",
-    "required": true,
+    "required": false,
     "autocomplete": [
       {
         "description": "Function to transform data"

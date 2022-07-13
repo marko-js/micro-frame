@@ -8,16 +8,16 @@
 </head>
 <body>
   <div>Host app</div>
-  <micro-frame-sse src="embed" name="test" />
+  <micro-frame-sse src="embed" name="test" read(e) { return [e.lastEventId, `Custome read for ${e.lastEventId}`] } />
   <micro-frame-slot from="test" slot="slot_1">
-    <@loading>
-      Loading...
-    </@loading>
+    <@catch|err|>
+      Slot_1 Error: ${err.message}
+    </@catch>
   </micro-frame-slot>
   <micro-frame-slot from="test" slot="slot_2">
-    <@loading>
-      Loading...
-    </@loading>
+    <@catch|err|>
+      Slot_2 Error: ${err.message}
+    </@catch>
   </micro-frame-slot>
 </body>
 </html>

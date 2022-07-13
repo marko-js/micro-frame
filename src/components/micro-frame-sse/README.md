@@ -85,9 +85,18 @@ A unique name for the stream. A page can have multiple streams.
 <micro-frame-sse src="..." name="stream_name" read(...) {...} />
 ```
 
-## (required) `read`
+## `read`
 
 A function to parse the event which returns slot ID and streamed content as an array (optionally an ifDone flag). The input is `MessageEvent`, please refer to [MessageEvent](https://developer.mozilla.org/en-US/docs/Web/API/EventSource/message_event#event_properties) for details.
+
+By default, below logic will be used if no `read` provided in the attribute:
+
+```typescript
+// default logic if read not provided
+function read(ev: MessageEvent) {
+  return [ev.lastEventId, ev.data];
+}
+```
 
 ```marko
 <micro-frame-sse src="..." name="..." read(ev) {

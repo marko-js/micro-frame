@@ -127,27 +127,22 @@ describe("micro-frame-sse", () => {
   describe("ssr 404", fixture(path.join(__dirname, "fixtures/ssr-404")));
 
   describe(
-    "invalid read function",
+    "custom read",
+    fixture(path.join(__dirname, "fixtures/custom-read"))
+  );
+
+  describe(
+    "invalid read",
     fixture(path.join(__dirname, "fixtures/invalid-read"))
   );
 
   describe(
-    "ssr custom fetch function",
+    "ssr custom fetch",
     fixture(path.join(__dirname, "fixtures/ssr-custom-fetch"))
   );
 
   describe(
-    "csr custom fetch function",
+    "csr custom fetch",
     fixture(path.join(__dirname, "fixtures/csr-custom-fetch"))
-  );
-
-  describe(
-    "csr invalid sourcename",
-    fixture(path.join(__dirname, "fixtures/csr-invalid-sourcename"))
-  );
-
-  describe(
-    "ssr invalid sourcename",
-    fixture(path.join(__dirname, "fixtures/ssr-invalid-sourcename"))
   );
 });
