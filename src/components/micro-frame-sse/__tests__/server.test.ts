@@ -130,4 +130,14 @@ describe("micro-frame-sse", () => {
     "csr custom fetch function",
     fixture(path.join(__dirname, "fixtures/csr-custom-fetch"))
   );
+
+  describe(
+    "csr invalid sourcename",
+    fixture(path.join(__dirname, "fixtures/csr-invalid-sourcename"))
+  );
+
+  describe(
+    "ssr invalid sourcename",
+    fixture(path.join(__dirname, "fixtures/ssr-invalid-sourcename"))
+  );
 });
