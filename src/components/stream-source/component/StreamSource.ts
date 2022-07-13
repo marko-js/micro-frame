@@ -17,10 +17,24 @@ class StreamSource {
     this._slots = new Map();
   }
 
-  async run(parserIterator: AsyncGenerator<string[]>) {
-    for await (const [slotId, html] of parserIterator) {
-      if (!slotId) throw new Error("[Parser Iterator] Invalid Slot ID");
+  private validRead(tuple: any) {
+    return (
+      Array.isArray(tuple) &&
+      tuple.filter(Boolean).length === 2 &&
+      typeof tuple[0] === "string" &&
+      typeof tuple[1] === "string"
+    );
+  }
 
+  async run(parserIterator: AsyncGenerator<string[]>) {
+    for await (const readTuple of parserIterator) {
+      if (!this.validRead(readTuple)) {
+        const err = new Error("[Parser Iterator] Invalid parser function.");
+        this.close(err);
+        throw err;
+      }
+
+      const [slotId, html] = readTuple;
       const slot = this.getOrCreateSlot(slotId);
       slot.push(html);
     }
