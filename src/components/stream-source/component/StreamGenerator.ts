@@ -15,6 +15,8 @@ class StreamGenerator {
   private _buffer: string[] = [];
   private _err?: Error;
   private _stream: AsyncGenerator<string>;
+  private _loadingSignal: DeferredPrimise =
+    StreamGenerator.createDeferredPromise();
 
   private static createDeferredPromise() {
     const deferred: DeferredPrimise = {};
@@ -49,6 +51,10 @@ class StreamGenerator {
     return this._stream;
   }
 
+  get loadingSignal() {
+    return this._loadingSignal;
+  }
+
   constructor() {
     this._stream = this.generator();
   }
@@ -64,6 +70,7 @@ class StreamGenerator {
     this._err = err;
     this._status = StreamStatus.CLOSED;
     this._next.resolve && this._next.resolve();
+    this._loadingSignal.resolve && this._loadingSignal.resolve();
   }
 }
 

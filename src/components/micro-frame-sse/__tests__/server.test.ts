@@ -112,6 +112,16 @@ describe("micro-frame-sse", () => {
     fixture(path.join(__dirname, "fixtures/ssr-stream-loading"))
   );
 
+  describe(
+    "ssr slot done signal",
+    fixture(path.join(__dirname, "fixtures/ssr-slot-done-signal"))
+  );
+
+  describe(
+    "csr slot done signal",
+    fixture(path.join(__dirname, "fixtures/csr-slot-done-signal"))
+  );
+
   describe("csr 404", fixture(path.join(__dirname, "fixtures/csr-404")));
 
   describe("ssr 404", fixture(path.join(__dirname, "fixtures/ssr-404")));

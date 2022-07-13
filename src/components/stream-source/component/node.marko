@@ -35,14 +35,35 @@ $ const request = async () => {
 $ const streamSource = out.global.micro_frame_sources.get(input.name);
 
 <div id=component.id data-src=input.src>
+  <if(input.loading)>
+    <${input.loading}/>
+    <!-- output a comment used as a marker to detect where the loading content starts so it can be removed -->
+    $!{`<!--${component.id}-->`}
+  </if>
+
   $ out.bf("@_", component, true);
-  <await(request())>
+  <await(request()) client-reorder>
     <@then|{ body }|>
-      $ streamSource.run(input.parser(body));
+      <await(streamSource.run(input.parser(body))) client-reorder>
+        <@then>
+          <if(input.loading)>
+            <!-- Remove all of the <@loading> content after we've received all the data -->
+            $ out.script(`((e,t,d)=>{t=document.getElementById(e);do{t.removeChild(d=t.firstChild)}while(d.data!==e)})(${JSON.stringify(component.id)});`);
+          </if>
+        </@then>
+        <@catch|err|>
+          $ streamSource.close(err);
+          <if(input.catch)>
+            <${input.catch}(err)/>
+          </if>
+        </@catch>
+      </await>
     </@then>
     <@catch|err|>
       $ streamSource.close(err);
-      <${input.catch}(err)/>
+      <if(input.catch)>
+        <${input.catch}(err)/>
+      </if>
     </@catch>
   </await>
   $ out.ef();

@@ -17,11 +17,12 @@ $ const stream = streamSlot.stream;
         $!{`<!--${component.id}-->`}
     </if>
 
+
     <macro name="wait">
         <await(stream.next()) client-reorder catch=input.catch timeout=input.timeout>
             <@then|{ value, done }|>
-                $!{value}
                 <if(!done)>
+                    $!{value}
                     <wait/>
                 </if>
             </@then>
@@ -29,14 +30,17 @@ $ const stream = streamSlot.stream;
     </macro>
     $ out.bf("@_", component, true);
     <wait/>
+    <await(streamSlot.loadingSignal.promise) client-reorder>
+        <@then>
+            <if(input.loading)>
+                <!-- Remove all of the <@loading> content after we've received all the data -->
+                $ out.script(
+                    `((e,t,d)=>{t=document.getElementById(e);do{t.removeChild(d=t.firstChild)}while(d.data!==e)})(${JSON.stringify(
+                        component.id
+                    )});`
+                );
+            </if>
+        </@then>
+    </await>
     $ out.ef();
-
-    <if(input.loading)>
-        <!-- Remove all of the <@loading> content after we've received all the data -->
-        $ out.script(
-            `((e,t,d)=>{t=document.getElementById(e);do{t.removeChild(d=t.firstChild)}while(d.data!==e)})(${JSON.stringify(
-                component.id
-            )});`
-        );
-    </if>
 </div>
