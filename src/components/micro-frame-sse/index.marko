@@ -1,45 +1,44 @@
 $ async function* parser(readable) {
-    async function* readEvent() {
-        let buf = '';
-        for await (const b of readable) {
-            const str = b.toString()
-            const split = str.split('\n\n');
-            if (split.length > 1) {
-                const eventStr = buf + split[0];
-                buf = split[1];
-                yield eventStr;
-            } else {
-                buf += str;
-            }
-        }
-        if (buf) {
-            yield buf;
-        }
+  async function* readEvent() {
+    let buf = "";
+    for await (const b of readable) {
+      const str = b.toString();
+      const split = str.split("\n\n");
+      if (split.length > 1) {
+        const eventStr = buf + split[0];
+        buf = split[1];
+        yield eventStr;
+      } else {
+        buf += str;
+      }
     }
-    for await (const eventStr of readEvent()) {
-        let data = '';
-        let id;
-        let type;
-        const lines = eventStr.split('\n').filter(Boolean);
-        const idRegEx = /^id: (.*?)$/;
-        const dataRegEx = /^data: (.*?)$/;
-        const typeRegEx = /^type: (.*?)$/;
-        for (const l of lines) {
-            const idRes = idRegEx.exec(l);
-            if (idRes) {
-                id = idRes[1];
-            }
-
-            const typeRes = typeRegEx.exec(l);
-            if (typeRes) {
-                type = typeRes[1];
-            }
-
-            const dataRes = dataRegEx.exec(l);
-            data += dataRes ? dataRes[1] : '';
-        }
-        if (data) yield input.read({lastEventId: id, data, type});
+    if (buf) {
+      yield buf;
     }
-};
+  }
+  for await (const eventStr of readEvent()) {
+    let data = "";
+    let id;
+    let type;
+    const lines = eventStr.split("\n").filter(Boolean);
+    const idRegEx = /^id: (.*?)$/;
+    const dataRegEx = /^data: (.*?)$/;
+    const typeRegEx = /^type: (.*?)$/;
+    for (const l of lines) {
+      const idRes = idRegEx.exec(l);
+      if (idRes) {
+        id = idRes[1];
+      }
 
-<stream-source parser=parser ...input />
+      const typeRes = typeRegEx.exec(l);
+      if (typeRes) {
+        type = typeRes[1];
+      }
+
+      const dataRes = dataRegEx.exec(l);
+      data += dataRes ? dataRes[1] : "";
+    }
+    if (data) yield input.read({ lastEventId: id, data, type });
+  }
+}
+<stream-source parser=parser ...input/>
