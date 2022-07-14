@@ -34,20 +34,7 @@ Considering SSE is only one kind of streaming formats, `micro-frame` could poten
 `micro-frame-sse` tag is required to put into earlier stage of page rendering (mainly at beginning of the page), who will initiate the SSE request as soon as page starts. `micro-frame-slot` is where content being injected and can be placed at any desired location.
 
 ```marko
-<micro-frame-sse
-  src="sse-source"
-  name="unique_name"
-  read(ev) {
-    // assuming data is in JSON format
-    const data = JSON.parse(ev.data);
-    const slot = data.slot, html = data.content;
-    return [slot, html];
-  }
->
-  <@catch|err|>
-      Uh-oh! ${err.message || err}
-  </@catch>
-</micro-frame-sse>
+<micro-frame-sse src="sse-source" name="unique_name" />
 
 <micro-frame-slot from="unique_name" slot="slot_1">
   <@loading>
@@ -74,7 +61,7 @@ content in between
 A path to SSE endpoint.
 
 ```marko
-<micro-frame-sse src="sse-source" name="..." read(...) {...} />
+<micro-frame-sse src="sse-source" name="..." />
 ```
 
 ## (required) `name`
@@ -82,7 +69,7 @@ A path to SSE endpoint.
 A unique name for the stream. A page can have multiple streams.
 
 ```marko
-<micro-frame-sse src="..." name="stream_name" read(...) {...} />
+<micro-frame-sse src="..." name="stream_name" />
 ```
 
 ## `read`
@@ -114,7 +101,7 @@ function read(ev: MessageEvent) {
 Optionally provide additional http headers to send. Only the object form shown below is supported.
 
 ```marko
-<micro-frame-sse src="..." name="..." read(...) {...} headers={
+<micro-frame-sse src="..." name="..." headers={
   "X-My-Header": "Hello",
   "X-Another-Header": "World"
 }/>
@@ -127,7 +114,7 @@ Optionally provide additional http headers to send. Only the object form shown b
 Optionally provide function to override default `fetch` logic.
 
 ```marko
-<micro-frame-sse src="..." name="..." read(...) {...} fetch(...args) {
+<micro-frame-sse src="..." name="..." fetch(...args) {
   return new Promise(resolve => {
     resolve({
       ok: true,
@@ -149,7 +136,7 @@ Mirrors the [`Request.cache` options](https://developer.mozilla.org/en-US/docs/W
 This example will always show cached content if available
 and fallback to the network otherwise
 -->
-<micro-frame-sse src="..." name="..." read(...) {...} cache="force-cache"/>
+<micro-frame-sse src="..." name="..." cache="force-cache"/>
 ```
 
 ## `timeout`
@@ -161,7 +148,7 @@ If set to `0` the request will not time out.
 <!--
 This example will disable the default 30s timeout.
 -->
-<micro-frame-sse src="..." name="..." read(...) {...} timeout=0/>
+<micro-frame-sse src="..." name="..." timeout=0/>
 ```
 
 # `<micro-frame-slot>` API
