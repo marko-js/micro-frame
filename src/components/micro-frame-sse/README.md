@@ -66,7 +66,7 @@ A path to SSE endpoint.
 
 ## (required) `name`
 
-A unique name for the stream. A page can have multiple streams.
+A unique name for the stream which matches slot's [from](#required-from). A page can have multiple streams.
 
 ```marko
 <micro-frame-sse src="..." name="stream_name" />
@@ -163,7 +163,7 @@ Unique ID for the slot which is used to receive streaming content from the SSE.
 
 ## (required) `from`
 
-Stream source name matching `name` attribute of `<micro-frame-sse>`.
+Stream source name matching [name](#required-name) attribute of `<micro-frame-sse>`.
 
 ```marko
 <micro-frame-slot from="stream-source-name" slot="..." />

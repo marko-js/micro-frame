@@ -36,7 +36,7 @@ $ const streamSource = out.global.micro_frame_sources.get(input.name);
 
 <div id=component.id data-src=input.src>
   $ out.bf("@_", component, true);
-  <await(request()) client-reorder>
+  <await(request()) client-reorder timeout=input.timeout>
     <@then|{ body }|>
       <await(streamSource.run(input.parser(body))) client-reorder>
         <@catch|err|>
