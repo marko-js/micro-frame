@@ -1,7 +1,7 @@
 interface DeferredPrimise {
   promise?: Promise<unknown>;
   resolve?(value?: unknown): void;
-  reject?(): void;
+  reject?(err: Error): void;
 }
 
 enum StreamStatus {
@@ -12,7 +12,6 @@ enum StreamStatus {
 class StreamGenerator {
   private _next: DeferredPrimise = StreamGenerator.createDeferredPromise();
   private _buffer: string[] = [];
-  private _err?: Error;
 
   readonly loadingSignal: DeferredPrimise =
     StreamGenerator.createDeferredPromise();
@@ -35,10 +34,6 @@ class StreamGenerator {
 
       this._next = StreamGenerator.createDeferredPromise();
 
-      if (this._err) {
-        throw this._err;
-      }
-
       if (this._buffer.length) {
         const chunk = this._buffer.join("");
         this._buffer.length = 0;
@@ -58,10 +53,14 @@ class StreamGenerator {
     }
   }
 
-  done(err?: Error) {
-    this._err = err;
+  done() {
     this.status = StreamStatus.CLOSED;
     this._next.resolve && this._next.resolve();
+    this.loadingSignal.resolve && this.loadingSignal.resolve();
+  }
+
+  throw(err: Error) {
+    this._next.reject && this._next.reject(err);
     this.loadingSignal.resolve && this.loadingSignal.resolve();
   }
 }

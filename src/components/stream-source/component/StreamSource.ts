@@ -46,7 +46,9 @@ class StreamSource {
   }
 
   close(err?: Error) {
-    this._slots.forEach((slot: StreamGenerator) => slot.done(err));
+    this._slots.forEach((slot: StreamGenerator) =>
+      err ? slot.throw(err) : slot.done()
+    );
   }
 }
 
