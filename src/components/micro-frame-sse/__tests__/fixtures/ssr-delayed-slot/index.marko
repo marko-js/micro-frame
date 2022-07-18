@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple Example</title>
+  <esbuild-assets/>
+</head>
+<body>
+  <div>Host app</div>
+  <micro-frame-sse src="embed" name="test" />
+  <await(new Promise(res => setTimeout(res, 1000)))>
+    <@then>
+      <micro-frame-slot from="test" slot="slot_1" />
+      <micro-frame-slot from="test" slot="slot_2" />
+    </@then>
+  </await>
+</body>
+</html>

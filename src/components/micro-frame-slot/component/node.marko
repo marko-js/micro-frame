@@ -8,7 +8,7 @@ $ {
 }
 $ const streamSource = out.global.micro_frame_sources.get(sourceName);
 $ const streamSlot = streamSource.slot(input.slot);
-$ const stream = streamSlot.stream;
+$ const stream = streamSlot.stream();
 <div id=component.id data-slot=input.slot data-from=input.from>
   <if(input.loading)>
     <${input.loading}/>

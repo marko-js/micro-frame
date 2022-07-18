@@ -5,9 +5,11 @@ $ async function* parser(readable) {
       const str = b.toString();
       const split = str.split("\n\n");
       if (split.length > 1) {
-        const eventStr = buf + split[0];
-        buf = split[1];
-        yield eventStr;
+        yield buf + split[0];
+        for (const ev of split.slice(1, split.length - 1)) {
+          yield ev;
+        }
+        buf = split[split.length - 1];
       } else {
         buf += str;
       }

@@ -1,0 +1,17 @@
+class {
+  onCreate() {
+    this.state = { mounted: false, slots: false };
+  }
+  onMount() {
+    this.state.mounted = true;
+    this.once("update", () => this.state.slots = true);
+  }
+}
+
+<if(state.mounted)>
+  <micro-frame-sse src="embed" name="test" />
+  <if(state.slots)>
+    <micro-frame-slot from="test" slot="slot_1" />
+    <micro-frame-slot from="test" slot="slot_2" />
+  </if>
+</if>
