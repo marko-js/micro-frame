@@ -9,17 +9,12 @@ $ {
 $ const streamSource = out.global.micro_frame_sources.get(sourceName);
 $ const streamSlot = streamSource.slot(input.slot);
 $ const stream = streamSlot.stream();
+$ let finishLoading;
+$ const loadingSignal = new Promise(res => finishLoading = res);
 <div id=component.id data-slot=input.slot data-from=input.from>
-  <if(input.loading)>
-    <${input.loading}/>
-
-    <!-- output a comment used as a marker to detect where the loading content starts so it can be removed -->
-    $!{`<!--${component.id}-->`}
-  </if>
   <macro name="wait">
     <await(stream.next())
       client-reorder
-      catch=input.catch
       timeout=input.timeout
     >
       <@then|{ value, done }|>
@@ -27,22 +22,19 @@ $ const stream = streamSlot.stream();
           $!{value}
           <wait/>
         </if>
+        <else>
+          $ finishLoading && finishLoading();
+        </else>
       </@then>
+      <@catch|err|>
+        $ finishLoading && finishLoading();
+        <${input.catch}(err)/>
+      </@catch>
     </await>
   </macro>
+  
   $ out.bf("@_", component, true);
+  <await(loadingSignal) placeholder=input.loading client-reorder />
   <wait/>
-  <await(streamSlot.loadingSignal.promise) client-reorder>
-    <@then>
-      <if(input.loading)>
-        <!-- Remove all of the <@loading> content after we've received all the data -->
-        $ out.script(
-          `((e,t,d)=>{t=document.getElementById(e);do{t.removeChild(d=t.firstChild)}while(d.data!==e)})(${JSON.stringify(
-            component.id
-          )});`
-        );
-      </if>
-    </@then>
-  </await>
   $ out.ef();
 </div>

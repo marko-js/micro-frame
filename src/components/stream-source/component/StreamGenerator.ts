@@ -14,9 +14,6 @@ class StreamGenerator {
   private _next: DeferredPrimise = StreamGenerator.createDeferredPromise();
   private _buffer: string[] = [];
 
-  readonly loadingSignal: DeferredPrimise =
-    StreamGenerator.createDeferredPromise();
-
   status: StreamStatus = StreamStatus.PAUSED;
 
   private static createDeferredPromise() {
@@ -57,13 +54,11 @@ class StreamGenerator {
   done() {
     this.status = StreamStatus.CLOSED;
     this._next.resolve();
-    this.loadingSignal.resolve();
   }
 
   throw(err: Error) {
     this.status = StreamStatus.CLOSED;
     this._next.reject(err);
-    this.loadingSignal.resolve();
   }
 }
 
