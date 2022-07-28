@@ -155,4 +155,9 @@ describe("micro-frame-sse", () => {
     "csr delayed slot",
     fixture(path.join(__dirname, "fixtures/csr-delayed-slot"))
   );
+
+  describe(
+    "ssr client-reorder",
+    fixture(path.join(__dirname, "fixtures/ssr-client-reorder"))
+  );
 });

@@ -10,11 +10,11 @@ $ const streamSource = out.global.micro_frame_sources.get(sourceName);
 $ const streamSlot = streamSource.slot(input.slot);
 $ const stream = streamSlot.stream();
 $ let finishLoading;
-$ const loadingSignal = new Promise(res => finishLoading = res);
+$ const loadingSignal = new Promise((res) => (finishLoading = res));
 <div id=component.id data-slot=input.slot data-from=input.from>
   <macro name="wait">
     <await(stream.next())
-      client-reorder
+      client-reorder=input.clientReorder
       timeout=input.timeout
     >
       <@then|{ value, done }|>
@@ -32,9 +32,8 @@ $ const loadingSignal = new Promise(res => finishLoading = res);
       </@catch>
     </await>
   </macro>
-  
   $ out.bf("@_", component, true);
-  <await(loadingSignal) placeholder=input.loading client-reorder />
+  <await(loadingSignal) placeholder=input.loading client-reorder/>
   <wait/>
   $ out.ef();
 </div>

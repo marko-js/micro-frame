@@ -16,6 +16,15 @@
       }
     ]
   },
+  "@client-reorder": {
+    "type": "boolean",
+    "autocomplete": [
+      {
+        "description": "See client-reorder in <await>",
+        "descriptionMoreURL": "https://markojs.com/docs/core-tags/#await"
+      }
+    ]
+  },
   "@catch <catch>": {
     "attributes": {},
     "autocomplete": [
