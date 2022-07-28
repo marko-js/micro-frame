@@ -42,7 +42,7 @@ $ async function* parser(readable) {
     }
     if (data) {
       if (input.read) yield input.read({ lastEventId: id, data, type });
-      else yield [id, data];
+      else yield [id, data, true];
     }
   }
 }

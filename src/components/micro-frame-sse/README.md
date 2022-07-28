@@ -76,12 +76,14 @@ A unique name for the stream which matches slot's [from](#required-from). A page
 
 A function to parse the event which returns slot ID and streamed content as an array (optionally an ifDone flag). The input is `MessageEvent`, please refer to [MessageEvent](https://developer.mozilla.org/en-US/docs/Web/API/EventSource/message_event#event_properties) for details.
 
+Note that ifDone flag is important when progressive rendering is in-order, because unfinished slot will block content streaming below the tag.
+
 By default, below logic will be used if no `read` provided in the attribute:
 
 ```typescript
 // default logic if read not provided
 function read(ev: MessageEvent) {
-  return [ev.lastEventId, ev.data];
+  return [ev.lastEventId, ev.data, true];
 }
 ```
 

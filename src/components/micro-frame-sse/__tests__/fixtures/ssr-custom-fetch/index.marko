@@ -18,7 +18,7 @@ import { Readable } from "stream";
       stream.push(null);
       resolve({ ok: true, body: stream });
     });
-  } />
+  } read=(e => [e.lastEventId, e.data]) />
   <micro-frame-slot from="test" slot="slot_1" />
   <micro-frame-slot from="test" slot="slot_2" />
 </body>
