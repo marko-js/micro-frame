@@ -169,6 +169,14 @@ Stream source name matching [name](#required-name) attribute of `<micro-frame-ss
 <micro-frame-slot from="stream-source-name" slot="..." />
 ```
 
+## `client-reorder`
+
+Flag indicate if the slot need to be streamed out-of-order. Please refer to [client-reorder](https://markojs.com/docs/core-tags/#await) in `<await>` tag.
+
+```marko
+<micro-frame-slot from="..." slot="..." client-reorder />
+```
+
 ## `<@catch|err|>`
 
 An [attribute tag](https://markojs.com/docs/syntax/#attribute-tag) rendered when there is a network error or timeout.
