@@ -1,0 +1,11 @@
+{
+  "@parser": {
+    "type": "function",
+    "required": true,
+    "autocomplete": [
+      {
+        "description": "Function to parse data"
+      }
+    ]
+  }
+}

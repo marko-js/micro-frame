@@ -1,0 +1,69 @@
+{
+  "autocomplete": [
+    {
+      "displayText": "micro-frame-sse src=\"<src>\" read(e) { return [] }",
+      "snippet": "micro-frame-sse src=\"${1:src}\" read(e) { return [] }"
+    }
+  ],
+  "@src": {
+    "type": "string",
+    "required": true,
+    "autocomplete": [
+      {
+        "description": "A relative URL to an HTML resource"
+      }
+    ]
+  },
+  "@headers": {
+    "type": "object",
+    "autocomplete": [
+      {
+        "description": "Additional http headers to send"
+      }
+    ]
+  },
+  "@timeout": {
+    "type": "number",
+    "autocomplete": [
+      {
+        "description": "An idle timeout in ms after which the request is ended (default 30 seconds)"
+      }
+    ]
+  },
+  "@cache": {
+    "enum": ["default", "no-store", "reload", "force-cache", "only-if-cached"],
+    "autocomplete": [
+      {
+        "description": "A string indicating how the request will interact with the HTTP cache.",
+        "descriptionMoreURL": "https://developer.mozilla.org/en-US/docs/Web/API/Request/cache"
+      }
+    ]
+  },
+  "@name": {
+    "type": "string",
+    "required": true,
+    "autocomplete": [
+      {
+        "description": "Unique name"
+      }
+    ]
+  },
+  "@fetch": {
+    "type": "function",
+    "required": false,
+    "autocomplete": [
+      {
+        "description": "Customized fetch function"
+      }
+    ]
+  },
+  "@read": {
+    "type": "function",
+    "required": false,
+    "autocomplete": [
+      {
+        "description": "Function to transform data"
+      }
+    ]
+  }
+}

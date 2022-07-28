@@ -1,0 +1,46 @@
+{
+  "@slot": {
+    "type": "string",
+    "required": true,
+    "autocomplete": [
+      {
+        "description": "Slot ID"
+      }
+    ]
+  },
+  "@from": {
+    "type": "string",
+    "autocomplete": [
+      {
+        "description": "Match micro-frame-sse name attribute"
+      }
+    ]
+  },
+  "@client-reorder": {
+    "type": "boolean",
+    "autocomplete": [
+      {
+        "description": "See client-reorder in <await>",
+        "descriptionMoreURL": "https://markojs.com/docs/core-tags/#await"
+      }
+    ]
+  },
+  "@catch <catch>": {
+    "attributes": {},
+    "autocomplete": [
+      {
+        "displayText": "@catch|<err>|",
+        "description": "A block rendered when the resource fails to load",
+        "snippet": "@catch|${1:err}|"
+      }
+    ]
+  },
+  "@loading <loading>": {
+    "attributes": {},
+    "autocomplete": [
+      {
+        "description": "A block rendered while the resource is loading and removed after loading is complete"
+      }
+    ]
+  }
+}

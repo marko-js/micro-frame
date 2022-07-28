@@ -1,0 +1,18 @@
+class {
+  onCreate() {
+    this.state = { mounted: false, open: true };
+  }
+  onMount() {
+    this.state.mounted = true;
+  }
+  toggle() {
+    this.state.open = !this.state.open;
+  }
+}
+
+<button onClick("toggle")>Toggle</button>
+<if(state.mounted && state.open)>
+  <micro-frame-sse src="embed" name="test" read=(e => [e.lastEventId, e.data]) />
+  <micro-frame-slot from="test" slot="slot_1" />
+  <micro-frame-slot from="test" slot="slot_2" />
+</if>

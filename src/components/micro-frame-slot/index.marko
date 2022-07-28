@@ -1,0 +1,8 @@
+import slotComponent from "./component";
+
+// We have a proxy to the top level component
+// so that we can swap it out using `package.json#browser`.
+// https://gist.github.com/defunctzombie/4339901/49493836fb873ddaa4b8a7aa0ef2352119f69211
+// This allows us to have entirely different streaming implementations
+// depending on if this component is used in the server or browser.
+<${slotComponent} ...input/>
