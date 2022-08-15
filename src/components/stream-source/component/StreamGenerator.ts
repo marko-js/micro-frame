@@ -1,65 +1,77 @@
-interface DeferredPrimise {
-  promise: Promise<string>;
-  resolve(value?: unknown): void;
-  reject(err: Error): void;
-}
-
-enum StreamStatus {
-  ACTIVE,
-  PAUSED,
-  CLOSED,
-}
-
 class StreamGenerator {
-  private _next: DeferredPrimise = StreamGenerator.createDeferredPromise();
-  private _buffer: string[] = [];
-
-  status: StreamStatus = StreamStatus.PAUSED;
-
-  private static createDeferredPromise() {
-    const deferred: DeferredPrimise = {} as any;
-    deferred.promise = new Promise((_resolve, _reject) => {
-      deferred.resolve = _resolve;
-      deferred.reject = _reject;
-    });
-    return deferred;
-  }
+  private declare _next: DeferredPromise<boolean>;
+  private _buffer: Array<string | Error> = [];
+  private _pending = true;
+  private _done = false;
 
   private async *generator() {
+    while (!this._done && (await this._next?.promise)) {
+      this._pending = false;
+      this._next = createDeferredPromise();
+      if (this._buffer.length) {
+        yield this.readBuffer();
+      }
+    }
+
     if (this._buffer.length) {
-      const chunk = this._buffer.join("");
-      this._buffer.length = 0;
-      yield chunk;
+      yield this.readBuffer();
     }
-    while (this.status === StreamStatus.ACTIVE) {
-      const html = await this._next.promise;
-      if (html) yield html;
+  }
+
+  readBuffer() {
+    let chunk = "";
+    for (const buf of this._buffer) {
+      if (buf instanceof Error) {
+        throw buf;
+      } else {
+        chunk += buf;
+      }
     }
+    this._buffer.length = 0;
+    return chunk;
   }
 
   stream(): AsyncGenerator<string> {
-    if (this.status !== StreamStatus.CLOSED) this.status = StreamStatus.ACTIVE;
+    this._pending = false;
+    this._next = createDeferredPromise();
     return this.generator();
   }
 
   push(data: string) {
-    if (this._next.resolve && this.status === StreamStatus.ACTIVE) {
-      this._next.resolve(data);
-      this._next = StreamGenerator.createDeferredPromise();
-    } else {
-      this._buffer.push(data);
+    this._buffer.push(data);
+    if (!this._pending) {
+      this._pending = true;
+      this._next.resolve(true);
     }
   }
 
   done() {
-    this.status = StreamStatus.CLOSED;
-    this._next.resolve();
+    this._done = true;
+    !this._pending && this._next?.resolve(false);
   }
 
   throw(err: Error) {
-    this.status = StreamStatus.CLOSED;
-    this._next.reject(err);
+    if (this._pending) {
+      this._buffer.push(err);
+    } else {
+      this._next.reject(err);
+    }
   }
+}
+
+interface DeferredPromise<T> {
+  promise: Promise<T>;
+  resolve(value?: unknown): void;
+  reject(err: Error): void;
+}
+
+function createDeferredPromise<T>() {
+  const deferred = {} as DeferredPromise<T>;
+  deferred.promise = new Promise((_resolve, _reject) => {
+    deferred.resolve = _resolve;
+    deferred.reject = _reject;
+  });
+  return deferred;
 }
 
 export default StreamGenerator;
