@@ -4,6 +4,12 @@ import StreamSource from "./StreamSource";
 
 static const cachePath = path.resolve("node_modules/.cache/fetch");
 
+static async function* streamToAsyncIterator(stream) {
+  for await (const data of stream) {
+    yield data;
+  }
+}
+
 $ {
   if (!(out.global.micro_frame_sources instanceof Map)) {
     out.global.micro_frame_sources = new Map();
@@ -39,7 +45,7 @@ $ const streamSource = out.global.micro_frame_sources.get(input.name);
   $ out.bf("@_", component, true);
   <await(request()) client-reorder timeout=input.timeout>
     <@then|{ body }|>
-      <await(streamSource.run(input.parser(body))) client-reorder>
+      <await(streamSource.run(input.parser(streamToAsyncIterator(body)))) client-reorder>
         <@catch|err|>
           $ streamSource.close(err);
         </@catch>

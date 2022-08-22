@@ -1,14 +1,14 @@
-import StreamGenerator from "./StreamGenerator";
+import createWritable, { StreamWritable } from "./StreamWritable";
 
 class StreamSource {
-  private readonly _slots: Map<string, StreamGenerator>;
+  private readonly _slots: Map<string, StreamWritable>;
 
-  private getOrCreateSlot(id: string): StreamGenerator {
+  private getOrCreateSlot(id: string): StreamWritable {
     if (this._slots.has(id)) {
-      return this._slots.get(id) as StreamGenerator;
+      return this._slots.get(id) as StreamWritable;
     }
 
-    const newSlot = new StreamGenerator();
+    const newSlot = createWritable();
     this._slots.set(id, newSlot);
     return newSlot;
   }
@@ -27,17 +27,23 @@ class StreamSource {
     );
   }
 
-  async run(parserIterator: AsyncGenerator<string[]>) {
-    for await (const result of parserIterator) {
-      if (!this.validRead(result)) {
+  async run(parserIterator: AsyncIterator<string[]>) {
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      const { value, done } = await parserIterator.next();
+
+      if (done) break;
+
+      if (!this.validRead(value)) {
         throw new Error("[Parser Iterator] Invalid parser function.");
       }
 
-      const [slotId, html, ifDone] = result;
+      const [slotId, html, ifDone] = value;
       const slot = this.getOrCreateSlot(slotId);
-      slot.push(html);
-      ifDone && slot.done();
+      slot.write(html);
+      ifDone && slot.end();
     }
+
     this.close();
   }
 
@@ -46,8 +52,8 @@ class StreamSource {
   }
 
   close(err?: Error) {
-    this._slots.forEach((slot: StreamGenerator) =>
-      err ? slot.throw(err) : slot.done()
+    this._slots.forEach((slot: StreamWritable) =>
+      err ? slot.error(err) : slot.end()
     );
   }
 }

@@ -1,4 +1,4 @@
-import StreamGenerator from "../../stream-source/component/StreamGenerator";
+import { StreamWritable } from "../../stream-source/component/StreamWritable";
 import getWritableDOM from "writable-dom";
 
 interface Input {
@@ -39,7 +39,7 @@ export = {
     this.onUpdate();
   },
   onDestroy() {
-    this.slot?.done();
+    this.slot?.end();
   },
   async onUpdate() {
     if (
@@ -63,8 +63,11 @@ export = {
         this.el.lastChild!.previousSibling
       );
 
-      for await (const html of this.slot!.stream()) {
-        writable.write(html);
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+        const { value, done } = await this.slot.next();
+        if (done) break;
+        writable.write(value);
       }
 
       await writable.close();
@@ -83,7 +86,7 @@ export = {
   el: HTMLDivElement;
   slotId: string | undefined;
   from: string | undefined;
-  slot: StreamGenerator | undefined;
+  slot: StreamWritable | undefined;
   onUpdate(): unknown;
   onCreate(): unknown;
   onMount(): unknown;

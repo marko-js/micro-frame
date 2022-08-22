@@ -1,33 +1,18 @@
-export default (
-  read?: (param: {
-    lastEventId?: string;
-    data: string;
-    type?: string;
-  }) => [string, string, boolean]
-) => {
-  return async function* parser(readable: AsyncGenerator<Buffer>) {
-    async function* readEvent() {
-      let buf = "";
-      for await (const b of readable) {
-        const str = b.toString();
-        const split = str.split("\n\n");
-        if (split.length > 1) {
-          yield buf + split[0];
-          for (const ev of split.slice(1, split.length - 1)) {
-            yield ev;
-          }
-          buf = split[split.length - 1];
-        } else {
-          buf += str;
-        }
-      }
-      if (buf) {
-        yield buf;
-      }
-    }
-    for await (const eventStr of readEvent()) {
+interface SSE {
+  lastEventId: string;
+  data: string;
+  type?: string;
+}
+export default (read?: (param: SSE) => [string, string, boolean?]) =>
+  function parser(
+    iterator: AsyncIterator<Buffer | string>
+  ): AsyncIterator<[string, string, boolean?]> {
+    let buf = "";
+    const eventBuf: SSE[] = [];
+
+    function parseEvent(eventStr: string) {
       let data = "";
-      let id;
+      let id = "";
       let type;
       const lines = eventStr.split("\n").filter(Boolean);
       const idRegEx = /^id: (.*?)$/;
@@ -47,10 +32,55 @@ export default (
         const dataRes = dataRegEx.exec(l);
         data += dataRes ? dataRes[1] : "";
       }
-      if (data) {
-        if (read) yield read({ lastEventId: id, data, type });
-        else yield [id, data, true];
-      }
+      eventStr = "";
+      return { lastEventId: id, data, type };
     }
+
+    return {
+      async next() {
+        if (eventBuf.length) {
+          const nextEv = eventBuf.shift() as SSE;
+          return {
+            value: read
+              ? read(nextEv)
+              : [nextEv.lastEventId, nextEv.data, true],
+            done: false,
+          };
+        }
+
+        // eslint-disable-next-line no-constant-condition
+        while (true) {
+          const { value, done } = await iterator.next();
+          if (done) {
+            if (buf) {
+              const ev = parseEvent(buf);
+              buf = "";
+              return {
+                value: read ? read(ev) : [ev.lastEventId, ev.data, true],
+                done: false,
+              };
+            } else {
+              return {
+                value: undefined,
+                done: true,
+              };
+            }
+          }
+
+          const str = value.toString();
+          const split = str.split("\n\n");
+          if (split.length > 1) {
+            const ev = parseEvent(buf + split.shift());
+            buf = split.pop() || "";
+            eventBuf.push(...split.map(parseEvent));
+            return {
+              value: read ? read(ev) : [ev.lastEventId, ev.data, true],
+              done: false,
+            };
+          } else {
+            buf += str;
+          }
+        }
+      },
+    };
   };
-};

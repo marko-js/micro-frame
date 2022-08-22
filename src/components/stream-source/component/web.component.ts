@@ -4,7 +4,7 @@ interface Input {
   src: string;
   fetch?(input: RequestInfo, init?: RequestInit): Promise<Response>;
   name: string;
-  parser(readable: AsyncGenerator): AsyncGenerator<string[]>;
+  parser(readable: AsyncIterator<string>): AsyncIterator<string[]>;
   method?: string;
   body?: JSON;
   timeout?: number;
@@ -12,14 +12,20 @@ interface Input {
   headers?: Record<string, string>;
 }
 
-async function* readableToGenerator(readable: ReadableStream) {
+function readableToAsyncIterator(
+  readable: ReadableStream
+): AsyncIterator<string> {
   const reader = readable.getReader();
   const decoder = new TextDecoder();
-  while (true) {
-    const { value, done } = await reader.read();
-    if (done) break;
-    yield decoder.decode(value);
-  }
+  return {
+    async next() {
+      const { value, done } = await reader.read();
+      return {
+        value: decoder.decode(value),
+        done,
+      };
+    },
+  };
 }
 
 export = {
@@ -55,7 +61,7 @@ export = {
         signal: controller.signal,
       });
       if (!res.ok) throw new Error(res.statusText);
-      const readable = readableToGenerator(res.body!);
+      const readable = readableToAsyncIterator(res.body!);
       await this.streamSource.run(this.input.parser(readable));
     } catch (_err) {
       err = _err as Error;
