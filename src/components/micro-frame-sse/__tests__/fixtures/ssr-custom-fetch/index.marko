@@ -14,7 +14,7 @@ import { Readable } from "stream";
     return new Promise(resolve => {
       const stream = new Readable({read() {}});
       stream.push('id: slot_1\n');
-      stream.push('data: costom fetch for slot_1\n\n');
+      stream.push('data: custom fetch for slot_1\n\n');
       stream.push(null);
       resolve({ ok: true, body: stream });
     });

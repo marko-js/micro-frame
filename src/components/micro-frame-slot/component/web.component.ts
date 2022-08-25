@@ -1,4 +1,5 @@
 import { StreamWritable } from "../../stream-source/component/StreamWritable";
+import { STREAM_SOURCE_MAP } from "../../stream-source/component/StreamSource";
 import getWritableDOM from "writable-dom";
 
 interface Input {
@@ -42,10 +43,7 @@ export = {
     this.slot?.end();
   },
   async onUpdate() {
-    if (
-      (this.slotId === this.input.slot && this.from === this.input.from) ||
-      !this.slot
-    )
+    if (this.slotId === this.input.slot && this.from === this.input.from)
       return;
 
     this.state.loading = true;
@@ -57,6 +55,16 @@ export = {
     let err: Error | undefined;
 
     try {
+      const streamSource = STREAM_SOURCE_MAP.get(this.from);
+      // In case of micro-frame-sse pure server-side rendered,
+      // throw error when the slot trying to connect to the stream
+      if (!streamSource)
+        throw new Error(
+          `micro-frame-sse ${this.from} is not defined or server-side rendered.`
+        );
+
+      this.slot = streamSource.slot(this.slotId);
+
       writable = getWritableDOM(
         this.el,
         // references the start of the preserved Marko fragment.

@@ -23,10 +23,31 @@ describe("micro-frame-sse", () => {
   );
 
   describe(
+    "ssr then toggle slot",
+    fixture(path.join(__dirname, "fixtures/ssr-then-toggle-slot"), [
+      async (page) => await page.click("text=Toggle"),
+      async (page) => await page.click("text=Toggle"),
+      async (page) => await page.click("text=Toggle"),
+    ])
+  );
+
+  describe(
     "csr then toggle",
     fixture(path.join(__dirname, "fixtures/csr-then-toggle"), [
       async (page) => await page.click("text=Toggle"),
       async (page) => await page.click("text=Toggle"),
+      async (page) => await page.click("text=Toggle"),
+    ])
+  );
+
+  describe(
+    "csr then toggle slot",
+    fixture(path.join(__dirname, "fixtures/csr-then-toggle-slot"), [
+      async (page) => await page.click("text=Toggle"),
+      async (page) => {
+        await page.click("text=Toggle");
+        await page.click("text=Open");
+      },
       async (page) => await page.click("text=Toggle"),
     ])
   );
@@ -127,13 +148,18 @@ describe("micro-frame-sse", () => {
   describe("ssr 404", fixture(path.join(__dirname, "fixtures/ssr-404")));
 
   describe(
-    "custom read",
-    fixture(path.join(__dirname, "fixtures/custom-read"))
+    "csr invalid sourcename",
+    fixture(path.join(__dirname, "fixtures/csr-invalid-sourcename"))
   );
 
   describe(
-    "invalid read",
-    fixture(path.join(__dirname, "fixtures/invalid-read"))
+    "ssr invalid sourcename",
+    fixture(path.join(__dirname, "fixtures/ssr-invalid-sourcename"))
+  );
+
+  describe(
+    "custom read",
+    fixture(path.join(__dirname, "fixtures/custom-read"))
   );
 
   describe(

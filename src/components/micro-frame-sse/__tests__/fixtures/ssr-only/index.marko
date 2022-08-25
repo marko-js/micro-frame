@@ -11,5 +11,8 @@
   <micro-frame-sse src="embed" name="test" read=(e => [e.lastEventId, e.data]) />
   <micro-frame-slot from="test" slot="slot_1" />
   <micro-frame-slot from="test" slot="slot_2" />
+  <micro-frame-sse src="embed" name="test2" read=(e => [e.lastEventId, e.data.replace("test", "test_2")]) />
+  <micro-frame-slot from="test2" slot="slot_1" />
+  <micro-frame-slot from="test2" slot="slot_2" />
 </body>
 </html>

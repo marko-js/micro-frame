@@ -1,4 +1,4 @@
-import StreamSource from "./StreamSource";
+import StreamSource, { STREAM_SOURCE_MAP } from "./StreamSource";
 
 interface Input {
   src: string;
@@ -20,6 +20,12 @@ function readableToAsyncIterator(
   return {
     async next() {
       const { value, done } = await reader.read();
+      if (done) {
+        return {
+          value: undefined,
+          done,
+        };
+      }
       return {
         value: decoder.decode(value),
         done,
@@ -29,12 +35,16 @@ function readableToAsyncIterator(
 }
 
 export = {
-  onCreate() {
+  onCreate(input) {
     const ssrEl = document.getElementById(this.id);
     if (ssrEl) {
       this.src = ssrEl.dataset.src;
       ssrEl.removeAttribute("data-src");
       ssrEl.removeAttribute("id");
+    } else {
+      const streamSource = new StreamSource();
+      STREAM_SOURCE_MAP.set(input.name, streamSource);
+      this.streamSource = streamSource;
     }
   },
   onMount() {
@@ -77,7 +87,7 @@ export = {
   method: string | undefined;
   controller: AbortController | undefined;
   onUpdate(): unknown;
-  onCreate(): unknown;
+  onCreate(input: Input): unknown;
   onMount(): unknown;
   onDestroy(): unknown;
 };

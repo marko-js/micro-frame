@@ -1,21 +1,8 @@
 import fetch from "make-fetch-happen";
 import path from "path";
-import StreamSource from "./StreamSource";
+import StreamSource, { STREAM_SOURCE_MAP } from "./StreamSource";
 
 static const cachePath = path.resolve("node_modules/.cache/fetch");
-
-static async function* streamToAsyncIterator(stream) {
-  for await (const data of stream) {
-    yield data;
-  }
-}
-
-$ {
-  if (!(out.global.micro_frame_sources instanceof Map)) {
-    out.global.micro_frame_sources = new Map();
-  }
-  out.global.micro_frame_sources.set(input.name, new StreamSource());
-}
 
 $ const request = async () => {
   const incomingMessage = out.stream && (out.stream.req || out.stream.request);
@@ -39,13 +26,15 @@ $ const request = async () => {
 
   return res;
 }
-$ const streamSource = out.global.micro_frame_sources.get(input.name);
+
+$ const streamSource = new StreamSource();
+$ STREAM_SOURCE_MAP.set(input.name, streamSource);
 
 <div id=component.id data-src=input.src>
   $ out.bf("@_", component, true);
   <await(request()) client-reorder timeout=input.timeout>
     <@then|{ body }|>
-      <await(streamSource.run(input.parser(streamToAsyncIterator(body)))) client-reorder>
+      <await(streamSource.run(input.parser(body[Symbol.asyncIterator]()))) client-reorder>
         <@catch|err|>
           $ streamSource.close(err);
         </@catch>

@@ -1,5 +1,6 @@
 import createWritable, { StreamWritable } from "./StreamWritable";
 
+export const STREAM_SOURCE_MAP: Map<string, StreamSource> = new Map();
 class StreamSource {
   private readonly _slots: Map<string, StreamWritable>;
 
@@ -17,16 +18,6 @@ class StreamSource {
     this._slots = new Map();
   }
 
-  // Parser(read) should return correct format: [slotId: string, html: string, ifDone?: boolean]
-  private validRead(arr: any) {
-    return (
-      Array.isArray(arr) &&
-      typeof arr[0] === "string" &&
-      typeof arr[1] === "string" &&
-      (typeof arr[2] === "undefined" || typeof arr[2] === "boolean")
-    );
-  }
-
   async run(parserIterator: AsyncIterator<string[]>) {
     // eslint-disable-next-line no-constant-condition
     while (true) {
@@ -34,14 +25,10 @@ class StreamSource {
 
       if (done) break;
 
-      if (!this.validRead(value)) {
-        throw new Error("[Parser Iterator] Invalid parser function.");
-      }
-
-      const [slotId, html, ifDone] = value;
+      const [slotId, html, isDone] = value;
       const slot = this.getOrCreateSlot(slotId);
       slot.write(html);
-      ifDone && slot.end();
+      isDone && slot.end();
     }
 
     this.close();

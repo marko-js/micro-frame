@@ -74,9 +74,9 @@ A unique name for the stream which matches slot's [from](#required-from). A page
 
 ## `read`
 
-A function to parse the event which returns slot ID and streamed content as an array (optionally an ifDone flag). The input is `MessageEvent`, please refer to [MessageEvent](https://developer.mozilla.org/en-US/docs/Web/API/EventSource/message_event#event_properties) for details.
+A function to parse the event which returns slot ID and streamed content as an array (optionally an isDone flag). The input is `MessageEvent`, please refer to [MessageEvent](https://developer.mozilla.org/en-US/docs/Web/API/EventSource/message_event#event_properties) for details.
 
-Note that ifDone flag is important when progressive rendering is in-order, because unfinished slot will block content streaming below the tag.
+Note that isDone flag is important when progressive rendering is in-order, because unfinished slot will block content streaming below the tag.
 
 By default, below logic will be used if no `read` provided in the attribute:
 
@@ -92,9 +92,9 @@ function read(ev: MessageEvent) {
   // logic to fetch slot ID and html_content from event
   return [slot, html_content];
 
-  // if the ifDone flag is set to true, slot will be closed after reading.
-  // const ifDone = true;
-  // return [slot, html_content, ifDone];
+  // if the isDone flag is set to true, slot will be closed after reading.
+  // const isDone = true;
+  // return [slot, html_content, isDone];
 } />
 ```
 

@@ -1,18 +1,3 @@
-import StreamSource from "./StreamSource";
-
-$ {
-  if (!(window.micro_frame_sources instanceof Map)) {
-    window.micro_frame_sources = new Map();
-  }
-
-  const sourceMap = window.micro_frame_sources;
-
-  if (sourceMap.has(input.name)) sourceMap.get(input.name).close();
-  const streamSource = new StreamSource();
-  sourceMap.set(input.name, streamSource);
-  component.streamSource = streamSource;
-}
-
 <div>
   <!--
   We put the streamed html in a preserved fragment.
