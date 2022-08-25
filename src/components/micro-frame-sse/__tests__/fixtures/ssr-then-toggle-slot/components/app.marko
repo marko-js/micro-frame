@@ -1,0 +1,19 @@
+class {
+  onCreate() {
+    this.state = { open: true };
+  }
+  toggle() {
+    this.state.open = !this.state.open;
+  }
+}
+
+<button onClick("toggle")>Toggle</button>
+<micro-frame-sse src="embed" name="test" read=(e => [e.lastEventId, e.data]) />
+<if(state.open)>
+  <micro-frame-slot from="test" slot="slot_1">
+    <@catch|err|>
+      Slot_1 Error: ${err.message}
+    </@catch>
+  </micro-frame-slot>
+  <micro-frame-slot from="test" slot="slot_2" />
+</if>

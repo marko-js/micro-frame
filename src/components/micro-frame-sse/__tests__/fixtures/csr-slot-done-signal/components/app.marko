@@ -1,0 +1,22 @@
+class {
+  onCreate() {
+    this.state = { mounted: false };
+  }
+  onMount() {
+    this.state.mounted = true;
+  }
+}
+
+<if(state.mounted)>
+  <micro-frame-sse src="embed" name="test" read(e) { return [e.lastEventId, e.data, true] } />
+  <micro-frame-slot from="test" slot="slot_1">
+    <@loading>
+      Loading...
+    </@loading>
+  </micro-frame-slot>
+  <micro-frame-slot from="test" slot="slot_2">
+    <@loading>
+      Loading...
+    </@loading>
+  </micro-frame-slot>
+</if>

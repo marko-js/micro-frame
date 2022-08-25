@@ -1,0 +1,7 @@
+<div>
+  <!--
+  We put the streamed html in a preserved fragment.
+  This allows Marko to avoid diffing that section.
+  -->
+  $ out.bf("@_", component, component.src === input.src).ef();
+</div>

@@ -1,0 +1,25 @@
+import { Readable } from "stream";
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple Example</title>
+  <esbuild-assets/>
+</head>
+<body>
+  <div>Host app</div>
+  <micro-frame-sse src="embed" name="test" fetch() {
+    return new Promise(resolve => {
+      const stream = new Readable({read() {}});
+      stream.push('id: slot_1\n');
+      stream.push('data: custom fetch for slot_1\n\n');
+      stream.push(null);
+      resolve({ ok: true, body: stream });
+    });
+  } read=(e => [e.lastEventId, e.data]) />
+  <micro-frame-slot from="test" slot="slot_1" />
+  <micro-frame-slot from="test" slot="slot_2" />
+</body>
+</html>

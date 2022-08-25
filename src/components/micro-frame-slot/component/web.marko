@@ -1,0 +1,16 @@
+static function noop() {}
+
+<div>
+  <${
+    state.err
+      ? input.catch || noop
+      : state.loading
+      ? input.loading || noop
+      : noop
+  }(state.err)/>
+  <!--
+  We put the streamed html in a preserved fragment.
+  This allows Marko to avoid diffing that section.
+  -->
+  $ out.bf("@_", component, !state.err && component.slotId === input.slot && component.from === input.from).ef();
+</div>

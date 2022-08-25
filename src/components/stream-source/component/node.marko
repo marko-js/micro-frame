@@ -1,0 +1,49 @@
+import fetch from "make-fetch-happen";
+import path from "path";
+import StreamSource, { STREAM_SOURCE_MAP } from "./StreamSource";
+
+static const cachePath = path.resolve("node_modules/.cache/fetch");
+
+$ const request = async () => {
+  const incomingMessage = out.stream && (out.stream.req || out.stream.request);
+
+  if (!incomingMessage) {
+    throw new Error("Could not get request from stream.");
+  }
+
+  const url = new URL(input.src, `${incomingMessage.protocol}://${incomingMessage.headers.host}`);
+  const res = await (input.fetch || fetch)(url, {
+    cachePath,
+    cache: input.cache,
+    strictSSL: process.env.NODE_TLS_REJECT_UNAUTHORIZED !== "0",
+    headers: {
+      ...incomingMessage.headers,
+      ...input.headers
+    }
+  })
+
+  if (!res.ok) throw new Error(res.statusText);
+
+  return res;
+}
+
+$ const streamSource = new StreamSource();
+$ STREAM_SOURCE_MAP.set(input.name, streamSource);
+
+<div id=component.id data-src=input.src>
+  $ out.bf("@_", component, true);
+  <await(request()) client-reorder timeout=input.timeout>
+    <@then|{ body }|>
+      <await(streamSource.run(input.parser(body[Symbol.asyncIterator]()))) client-reorder>
+        <@catch|err|>
+          $ streamSource.close(err);
+        </@catch>
+      </await>
+    </@then>
+    <@catch|err|>
+      $ streamSource.close(err);
+    </@catch>
+  </await>
+  $ out.ef();
+</div>
+

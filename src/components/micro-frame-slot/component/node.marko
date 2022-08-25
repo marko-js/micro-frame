@@ -1,0 +1,49 @@
+import StreamSource, { STREAM_SOURCE_MAP } from "../../stream-source/component/StreamSource";
+$ const sourceName = input.from;
+$ let err;
+$ {
+  if (!STREAM_SOURCE_MAP.has(sourceName))
+    err = new Error(`micro-frame-sse ${sourceName} is not defined.`);
+}
+
+<if(err)>
+  $ if (!input.catch) throw err;
+  <${input.catch}(err)/>
+</if>
+<else>
+  $ const streamSource = STREAM_SOURCE_MAP.get(sourceName);
+  $ const stream = streamSource.slot(input.slot);
+  $ let finishLoading;
+  $ {
+    const loadingPromise =
+      input.loading && new Promise((res) => (finishLoading = res));
+  }
+  <div id=component.id data-slot=input.slot data-from=input.from>
+    <macro name="wait">
+      <await(stream.next())
+        client-reorder=input.clientReorder
+        timeout=input.timeout
+      >
+        <@then|{ value, done }|>
+          <if(!done)>
+            $!{value}
+            <wait/>
+          </if>
+          <else>
+            $ finishLoading && finishLoading();
+          </else>
+        </@then>
+        <@catch|e|>
+          $ finishLoading && finishLoading();
+          <${input.catch}(e)/>
+        </@catch>
+      </await>
+    </macro>
+    $ out.bf("@_", component, true);
+    <if(input.loading)>
+      <await(loadingPromise) placeholder=input.loading client-reorder/>
+    </if>
+    <wait/>
+    $ out.ef();
+  </div>
+</else>
