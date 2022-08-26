@@ -7,6 +7,11 @@ interface Input {
   loading?: unknown;
   cache?: RequestCache;
   headers?: Record<string, string>;
+  fetch?: (
+    url: string,
+    options: RequestInit,
+    fetch: typeof window.fetch
+  ) => Promise<Response>;
 }
 
 interface State {
@@ -49,11 +54,15 @@ export = {
     let err: Error | undefined;
 
     try {
-      const res = await fetch(this.src, {
+      const options: RequestInit = {
         cache: this.input.cache,
         signal: controller.signal,
         headers: Object.assign({}, this.input.headers, { accept: "text/html" }),
-      });
+      };
+
+      const res = await (this.input.fetch
+        ? this.input.fetch(this.src, options, fetch)
+        : fetch(this.src, options));
       if (!res.ok) throw new Error(res.statusText);
       const reader = res.body!.getReader();
       const decoder = new TextDecoder();

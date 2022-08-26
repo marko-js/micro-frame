@@ -2,22 +2,9 @@ import path from "path";
 import fetch from "make-fetch-happen";
 
 static const cachePath = path.resolve("node_modules/.cache/fetch");
-static function createDeferredPromise() {
-  let resolve;
-  let reject;
-  const promise = new Promise((_resolve, _reject) => {
-    resolve = _resolve;
-    reject = _reject;
-  });
-  promise.resolve = resolve;
-  promise.reject = reject;
-  return promise;
-}
+static const strictSSL = process.env.NODE_TLS_REJECT_UNAUTHORIZED !== "0";
 
-$ let buf = "";
-$ let hasMore = true;
-$ let sentData = false;
-$ let next = (async () => {
+static async function fetchStream(input, out) {
   const incomingMessage = out.stream && (out.stream.req || out.stream.request);
 
   if (!incomingMessage) {
@@ -25,36 +12,31 @@ $ let next = (async () => {
   }
 
   const url = new URL(input.src, `${incomingMessage.protocol}://${incomingMessage.headers.host}`);
-  const res = await fetch(url, {
-    cachePath,
-    cache: input.cache,
-    strictSSL: process.env.NODE_TLS_REJECT_UNAUTHORIZED !== "0",
-    headers: {
-      ...incomingMessage.headers,
-      ...input.headers,
-      accept: "text/html",
-    }
-  });
+  const { cache } = input;
+  const headers = {
+    ...incomingMessage.headers,
+    ...input.headers,
+    accept: "text/html",
+  };
+
+  const res = await (input.fetch
+    ? input.fetch(url, { cache, headers }, fetch)
+    : fetch(url, {
+      cache,
+      headers,
+      cachePath,
+      strictSSL,
+    })
+  );
 
   if (!res.ok) throw new Error(res.statusText);
-  next = createDeferredPromise();
 
-  res.body
-    .on("data", data => {
-      buf += data.toString();
-      if (next) next = next.resolve();
-    })
-    .on("error", err => {
-      if (next) next = next.reject(err);
-      else out.error(err);
-    })
-    .on("end", () => {
-      hasMore = false;
-      if (next) next = next.resolve();
-    });
+  if (!res.body || !res.body[Symbol.asyncIterator]) {
+    throw new Error("Response body must be a stream.");
+  }
 
-    return next;
-})();
+  return res.body[Symbol.asyncIterator]();
+}
 
 <div id=component.id data-src=input.src>
   <if(input.loading)>
@@ -63,32 +45,42 @@ $ let next = (async () => {
     $!{`<!--${component.id}-->`}
   </if>
 
-  <macro name="wait">
-    <await(next)
-      timeout=input.timeout
-      catch=(!sentData && input.catch)>
-      <@then>
-        $!{buf}
-        <if(hasMore)>
-          $ buf = "";
-          $ sentData = true;
-          $ next = createDeferredPromise();
-          <wait/>
-        </if>
-      </@then>
-    </await>
-  </macro>
-
   <!--
   We put the streamed html in a preserved fragment.
   This allows Marko to avoid diffing that section.
   -->
   $ out.bf("@_", component, true);
-  <wait/>
-  $ out.ef();
+  <await(fetchStream(input, out)) timeout=input.timeout catch=input.catch>
+    <@then|iter|>
+      <macro name="wait">
+        <await(iter.next()) timeout=input.timeout>
+          <@then|{ value, done }|>
+            <if(done)>
+              <if(input.loading)>
+                <!-- Remove all of the <@loading> content after we've received all the data -->
+                $ out.script(`((e,t,d)=>{t=document.getElementById(e);do{t.removeChild(d=t.firstChild)}while(d.data!==e)})(${JSON.stringify(component.id)});`);
+              </if>
+            </if>
+            <else>
+              $!{value}
+              <wait/>
+            </else>
+          </@then>
+          <@catch|err|>
+            <if(input.catch)>
+              <!-- Remove everything in the container and render our catch handler -->
+              <script>document.getElementById(${JSON.stringify(component.id)}).textContent=""</script>
+              <${input.catch}(err)/>
+            </if>
+            <else>
+              $ throw err;
+            </else>
+          </@catch>
+        </await>
+      </macro>
 
-  <if(input.loading)>
-    <!-- Remove all of the <@loading> content after we've received all the data -->
-    $ out.script(`((e,t,d)=>{t=document.getElementById(e);do{t.removeChild(d=t.firstChild)}while(d.data!==e)})(${JSON.stringify(component.id)});`);
-  </if>
+      <wait/>
+    </@then>
+  </await>
+  $ out.ef();
 </div>

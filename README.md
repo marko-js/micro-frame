@@ -134,6 +134,26 @@ and fallback to the network otherwise
 <micro-frame src="..." cache="force-cache"/>
 ```
 
+## `fetch`
+
+Optionally provide function to override default `fetch` logic.
+
+```marko
+<micro-frame src="..." name="..." fetch(url, options, fetch) {
+  // The 3rd parameter allows us to continue to use micro-frames fetch implementation (which is different server/browser).
+  // We can use this override to do things like a POST request, eg:
+  return fetch(url, {
+    ...options,
+    method: "POST",
+    headers: {
+      ...headers,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ "some": "json" })
+  });
+}  />
+```
+
 ## `timeout`
 
 A timeout in `ms` (defaults to 30s) that will prematurely abort the request. This will trigger the `<@catch>` if provided.
