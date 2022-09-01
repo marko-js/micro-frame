@@ -119,3 +119,13 @@ describe(
 describe("csr 404", fixture(path.join(__dirname, "fixtures/csr-404")));
 
 describe("ssr 404", fixture(path.join(__dirname, "fixtures/ssr-404")));
+
+describe(
+  "csr custom fetch",
+  fixture(path.join(__dirname, "fixtures/csr-custom-fetch"))
+);
+
+describe(
+  "ssr custom fetch",
+  fixture(path.join(__dirname, "fixtures/ssr-custom-fetch"))
+);
