@@ -32,6 +32,15 @@
       }
     ]
   },
+  "@fetch": {
+    "type": "function",
+    "required": false,
+    "autocomplete": [
+      {
+        "description": "Customized fetch function"
+      }
+    ]
+  },
   "@cache": {
     "enum": ["default", "no-store", "reload", "force-cache", "only-if-cached"],
     "autocomplete": [
