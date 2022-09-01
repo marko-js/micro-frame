@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple Example</title>
+  <esbuild-assets/>
+</head>
+<body>
+  <div>Host app</div>
+  <micro-frame src="embed" fetch(src) {
+    async function* customFetch() {
+      yield `Custom fetch(src: ${src}) content.`;
+    }
+    return new Promise(resolve => {
+      resolve({ ok: true, body: customFetch() });
+    });
+  } />
+</body>
+</html>
