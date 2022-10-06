@@ -1,0 +1,23 @@
+class {
+  onCreate() {
+    this.state = { mounted: false };
+  }
+  onMount() {
+    this.state.mounted = true;
+  }
+}
+
+<if(state.mounted)>
+  <micro-frame src="embed" fetch(src) {
+    return new Promise(resolve => {
+      const stream = new ReadableStream({
+        start(controller) {
+          const encoder = new TextEncoder();
+          controller.enqueue(encoder.encode(`Custom fetch(src: ${src}) content.`));
+          controller.close();
+        }
+      });
+      resolve({ ok: true, body: stream });
+    });
+  } />
+</if>
