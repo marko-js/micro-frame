@@ -179,6 +179,23 @@ Flag indicate if the slot need to be streamed out-of-order. Please refer to [cli
 <micro-frame-slot from="..." slot="..." client-reorder />
 ```
 
+## `client-order-timeout`
+
+A timeout in `ms` that will prematurely convert slot rendering to out-of-order (aka `client-reorder = true`).
+
+```marko
+<micro-frame-slot src="..." name="..." client-order-timeout=1000/>
+```
+
+## `timeout` in slot
+
+A timeout in `ms` (defaults to 30s) that will prematurely abort the slot. This will trigger the `<@catch>` if provided.
+If set to `0` the request will not time out.
+
+```marko
+<micro-frame-slot src="..." name="..." timeout=0/>
+```
+
 ## `<@catch|err|>`
 
 An [attribute tag](https://markojs.com/docs/syntax/#attribute-tag) rendered when there is a network error or timeout.
