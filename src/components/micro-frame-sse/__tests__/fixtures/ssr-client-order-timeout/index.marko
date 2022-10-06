@@ -9,8 +9,8 @@
 <body>
   <div>Host app</div>
 <micro-frame-sse src="embed" name="test" read=(e => [e.lastEventId, e.data]) />
-<micro-frame-slot from="test" slot="slot_1" client-reorder />
-<micro-frame-slot from="test" slot="slot_2" client-reorder />
+<micro-frame-slot from="test" slot="slot_1" client-order-timeout=1000 />
+<micro-frame-slot from="test" slot="slot_2" client-order-timeout=1000 />
 <await(new Promise(res => setTimeout(() => res('non-reorder data'))))>
   <@then|result|>
     ${result}
