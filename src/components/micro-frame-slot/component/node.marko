@@ -37,11 +37,9 @@ $ {
   <div id=component.id data-slot=input.slot data-from=input.from>
     <macro name="wait">
       <await(
-        clientReorder
-          ? stream.next()
-          : Promise.race(
-              [clientOrderTimeoutPromise, stream.next()].filter(Boolean)
-            ),
+        clientOrderTimeoutPromise && !clientReorder
+          ? Promise.race([clientOrderTimeoutPromise, stream.next()])
+          : stream.next(),
       ) client-reorder=clientReorder timeout=input.timeout>
         <@then|{ value, done }|>
           <if(!done)>
