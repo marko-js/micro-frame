@@ -25,6 +25,14 @@
       }
     ]
   },
+  "@timeout": {
+    "type": "number",
+    "autocomplete": [
+      {
+        "description": "An idle timeout in ms after which the request is ended (default 30 seconds)"
+      }
+    ]
+  },
   "@catch <catch>": {
     "attributes": {},
     "autocomplete": [

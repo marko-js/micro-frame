@@ -186,4 +186,14 @@ describe("micro-frame-sse", () => {
     "ssr client-reorder",
     fixture(path.join(__dirname, "fixtures/ssr-client-reorder"))
   );
+
+  describe(
+    "ssr client-reorder false",
+    fixture(path.join(__dirname, "fixtures/ssr-client-reorder-false"))
+  );
+
+  describe(
+    "ssr timeout",
+    fixture(path.join(__dirname, "fixtures/ssr-timeout"))
+  );
 });
