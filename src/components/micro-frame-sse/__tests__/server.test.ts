@@ -196,4 +196,9 @@ describe("micro-frame-sse", () => {
     "ssr timeout",
     fixture(path.join(__dirname, "fixtures/ssr-timeout"))
   );
+
+  describe(
+    "ssr behind reorder",
+    fixture(path.join(__dirname, "fixtures/ssr-behind-reorder"))
+  );
 });
