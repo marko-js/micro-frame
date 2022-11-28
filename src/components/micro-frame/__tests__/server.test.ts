@@ -129,3 +129,8 @@ describe(
   "ssr custom fetch",
   fixture(path.join(__dirname, "fixtures/ssr-custom-fetch"))
 );
+
+describe(
+  "ssr behind reorder",
+  fixture(path.join(__dirname, "fixtures/ssr-behind-reorder"))
+);
