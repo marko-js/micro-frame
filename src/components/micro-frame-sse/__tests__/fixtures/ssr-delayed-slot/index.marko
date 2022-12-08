@@ -11,8 +11,21 @@
   <micro-frame-sse src="embed" name="test" read=(e => [e.lastEventId, e.data]) />
   <await(new Promise(res => setTimeout(res, 1000)))>
     <@then>
-      <micro-frame-slot from="test" slot="slot_1" />
-      <micro-frame-slot from="test" slot="slot_2" />
+      <micro-frame-slot from="test" slot="slot_1">
+        <@catch|err|>
+          Slot_1 Error: ${err.message}
+        </@catch>
+      </micro-frame-slot>
+      <micro-frame-slot from="test" slot="slot_2">
+        <@catch|err|>
+          Slot_2 Error: ${err.message}
+        </@catch>
+      </micro-frame-slot>
+      <micro-frame-slot from="test" slot="non_exist" timeout=200>
+        <@catch|err|>
+          non_exist Error: ${err.message}
+        </@catch>
+      </micro-frame-slot>
     </@then>
   </await>
 </body>

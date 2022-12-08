@@ -3,6 +3,7 @@ import createWritable, { StreamWritable } from "./StreamWritable";
 export const STREAM_SOURCE_MAP: Map<string, StreamSource> = new Map();
 class StreamSource {
   private readonly _slots: Map<string, StreamWritable>;
+  private _closed: boolean;
 
   private getOrCreateSlot(id: string): StreamWritable {
     if (this._slots.has(id)) {
@@ -16,6 +17,7 @@ class StreamSource {
 
   constructor() {
     this._slots = new Map();
+    this._closed = false;
   }
 
   async run(parserIterator: AsyncIterator<string[]>) {
@@ -35,10 +37,11 @@ class StreamSource {
   }
 
   slot(id: string) {
-    return this.getOrCreateSlot(id);
+    return this._closed ? this._slots.get(id) : this.getOrCreateSlot(id);
   }
 
   close(err?: Error) {
+    this._closed = true;
     this._slots.forEach((slot: StreamWritable) =>
       err ? slot.error(err) : slot.end()
     );

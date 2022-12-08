@@ -65,6 +65,10 @@ export = {
 
       this.slot = streamSource.slot(this.slotId);
 
+      if (!this.slot) {
+        return;
+      }
+
       writable = getWritableDOM(
         this.el,
         // references the start of the preserved Marko fragment.
