@@ -40,10 +40,12 @@ $ {
       </await>
     </macro>
     $ out.bf("@_", component, true);
-    <if(input.loading)>
-      <await(loadingPromise) placeholder=input.loading client-reorder/>
+    <if(stream)>
+      <if(input.loading)>
+        <await(loadingPromise) placeholder=input.loading client-reorder/>
+      </if>
+      <wait/>
     </if>
-    <wait/>
     $ out.ef();
   </div>
 </else>
