@@ -1,5 +1,5 @@
 import { StreamWritable } from "../../stream-source/component/StreamWritable";
-import { STREAM_SOURCE_MAP } from "../../stream-source/component/StreamSource";
+import { STREAM_SOURCE_MAP_CLIENT } from "../../stream-source/component/StreamSource";
 import getWritableDOM from "writable-dom";
 
 interface Input {
@@ -55,7 +55,7 @@ export = {
     let err: Error | undefined;
 
     try {
-      const streamSource = STREAM_SOURCE_MAP.get(this.from);
+      const streamSource = STREAM_SOURCE_MAP_CLIENT.get(this.from);
       // In case of micro-frame-sse pure server-side rendered,
       // throw error when the slot trying to connect to the stream
       if (!streamSource)

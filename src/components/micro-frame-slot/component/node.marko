@@ -1,8 +1,8 @@
-import StreamSource, { STREAM_SOURCE_MAP } from "../../stream-source/component/StreamSource";
+import StreamSource from "../../stream-source/component/StreamSource";
 $ const sourceName = input.from;
 $ let err;
 $ {
-  if (!STREAM_SOURCE_MAP.has(sourceName))
+  if (!out.global.STREAM_SOURCE_MAP_SERVER || !out.global.STREAM_SOURCE_MAP_SERVER.has(sourceName))
     err = new Error(`micro-frame-sse ${sourceName} is not defined.`);
 }
 
@@ -11,7 +11,7 @@ $ {
   <${input.catch}(err)/>
 </if>
 <else>
-  $ const streamSource = STREAM_SOURCE_MAP.get(sourceName);
+  $ const streamSource = out.global.STREAM_SOURCE_MAP_SERVER.get(sourceName);
   $ const stream = streamSource.slot(input.slot);
   $ let finishLoading;
   $ {
