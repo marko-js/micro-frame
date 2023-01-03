@@ -1,4 +1,4 @@
-import StreamSource, { STREAM_SOURCE_MAP } from "./StreamSource";
+import StreamSource, { STREAM_SOURCE_MAP_CLIENT } from "./StreamSource";
 
 interface Input {
   src: string;
@@ -43,7 +43,7 @@ export = {
       ssrEl.removeAttribute("id");
     } else {
       const streamSource = new StreamSource();
-      STREAM_SOURCE_MAP.set(input.name, streamSource);
+      STREAM_SOURCE_MAP_CLIENT.set(input.name, streamSource);
       this.streamSource = streamSource;
     }
   },

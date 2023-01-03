@@ -1,6 +1,6 @@
 import createWritable, { StreamWritable } from "./StreamWritable";
 
-export const STREAM_SOURCE_MAP: Map<string, StreamSource> = new Map();
+export const STREAM_SOURCE_MAP_CLIENT: Map<string, StreamSource> = new Map();
 class StreamSource {
   private readonly _slots: Map<string, StreamWritable>;
   private _closed: boolean;

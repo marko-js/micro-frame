@@ -1,6 +1,6 @@
 import fetch from "make-fetch-happen";
 import path from "path";
-import StreamSource, { STREAM_SOURCE_MAP } from "./StreamSource";
+import StreamSource from "./StreamSource";
 
 static const cachePath = path.resolve("node_modules/.cache/fetch");
 
@@ -27,8 +27,13 @@ $ const request = async () => {
   return res;
 }
 
-$ const streamSource = new StreamSource();
-$ STREAM_SOURCE_MAP.set(input.name, streamSource);
+$ {
+  const streamSource = new StreamSource();
+  if (out.global.STREAM_SOURCE_MAP_SERVER === undefined) {
+    out.global.STREAM_SOURCE_MAP_SERVER = new Map();
+  }
+  out.global.STREAM_SOURCE_MAP_SERVER.set(input.name, streamSource);
+}
 
 <div id=component.id data-src=input.src>
   $ out.bf("@_", component, true);
