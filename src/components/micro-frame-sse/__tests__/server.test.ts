@@ -41,6 +41,13 @@ describe("micro-frame-sse", () => {
   );
 
   describe(
+    "csr then change src",
+    fixture(path.join(__dirname, "fixtures/csr-then-change-src"), [
+      async (page) => await page.click("text=Change"),
+    ])
+  );
+
+  describe(
     "csr then toggle slot",
     fixture(path.join(__dirname, "fixtures/csr-then-toggle-slot"), [
       async (page) => await page.click("text=Toggle"),

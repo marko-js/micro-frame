@@ -1,0 +1,20 @@
+class {
+  onCreate() {
+    this.state = { mounted: false, open: true, src: "embed", slots: ["slot_1", "slot_2"] };
+  }
+  onMount() {
+    this.state.mounted = true;
+  }
+  change() {
+    this.state.src = "embed_2";
+    this.state.slots = ["slot_3", "slot_4"];
+  }
+}
+
+<button onClick("change")>Change</button>
+<if(state.mounted && state.open)>
+  <micro-frame-sse src=state.src name="test" read=(e => [e.lastEventId, e.data]) />
+  <for|slot| of=state.slots>
+    <micro-frame-slot from="test" slot=slot />
+  </for>
+</if>

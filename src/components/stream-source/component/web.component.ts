@@ -47,6 +47,11 @@ export = {
       this.streamSource = streamSource;
     }
   },
+  onInput(input) {
+    if (this.src !== input.src && this.streamSource) {
+      this.streamSource.reset();
+    }
+  },
   onMount() {
     // Only trigger a new load if this wasn't ssr'd, or the src has changed.
     this.onUpdate();
@@ -86,6 +91,7 @@ export = {
   src: string | undefined;
   method: string | undefined;
   controller: AbortController | undefined;
+  onInput(input: Input): unknown;
   onUpdate(): unknown;
   onCreate(input: Input): unknown;
   onMount(): unknown;

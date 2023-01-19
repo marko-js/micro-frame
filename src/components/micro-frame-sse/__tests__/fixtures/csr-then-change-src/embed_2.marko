@@ -1,0 +1,25 @@
+import { wait } from "../../../../../__tests__/queue";
+import fs from "fs";
+import path from "path";
+
+$ const slot_1_html = fs.readFileSync(path.resolve(__dirname ,'slot_1.html'), 'utf8');
+$ const slot_2_html = fs.readFileSync(path.resolve(__dirname ,'slot_2.html'), 'utf8');
+$ const first = `id: slot_3\ndata: ${slot_1_html.replace(/\r?\n/g, '')}\n\n`;
+$ const second = `id: slot_4\ndata: ${slot_2_html.replace(/\r?\n/g, '')}\n\n`;
+$ const third = `id: slot_3\ndata: after src change\n\n`;
+
+<await(wait())>
+  <@then>
+    $!{first}
+    <await(wait())>
+      <@then>
+        $!{second}
+        <await(wait())>
+          <@then>
+            $!{third}
+          </@then>
+        </await>
+      </@then>
+    </await>
+  </@then>
+</await>

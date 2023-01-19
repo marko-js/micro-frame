@@ -46,6 +46,10 @@ class StreamSource {
       err ? slot.error(err) : slot.end()
     );
   }
+
+  reset() {
+    this._closed = false;
+  }
 }
 
 export default StreamSource;
