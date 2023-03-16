@@ -20,7 +20,7 @@ class StreamSource {
     this._closed = false;
   }
 
-  async run(parserIterator: AsyncIterator<string[]>) {
+  async run(parserIterator: AsyncIterator<[string, string, boolean?]>) {
     // eslint-disable-next-line no-constant-condition
     while (true) {
       const { value, done } = await parserIterator.next();

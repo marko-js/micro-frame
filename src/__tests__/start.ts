@@ -6,6 +6,7 @@ import express from "express";
 import markoExpress from "@marko/express";
 import { wait } from "./queue";
 import build from "./build";
+import ServerStream from "../../src/components/micro-frame-sse/ServerStream";
 
 export async function start(dir: string) {
   const entries = await fs.promises.readdir(dir);
@@ -53,16 +54,32 @@ export async function start(dir: string) {
           }
         }
 
-        app.get(`/${name === "index" ? "" : name}`, (_req, res) => {
-          res.locals.runtimeId = runtimeId;
-          res.locals.assets = assets;
+        app.get(
+          `/${name === "index" || name === "server-stream" ? "" : name}`,
+          (req, res) => {
+            res.locals.runtimeId = runtimeId;
+            res.locals.assets = assets;
 
-          if (process.env.NODE_ENV === "test") {
-            // for some reason express suppresses errors in test env.
-            res.on("error", console.error);
+            if (process.env.NODE_ENV === "test") {
+              // for some reason express suppresses errors in test env.
+              res.on("error", console.error);
+            }
+            if (name === "server-stream") {
+              const serverStream = new ServerStream(req);
+              serverStream.stream("test", "embed", {
+                read: (e) => [e.lastEventId, e.data],
+              });
+              res.marko(template, {
+                $global: {
+                  STREAM_SOURCE_MAP_SERVER:
+                    serverStream.STREAM_SOURCE_MAP_SERVER,
+                },
+              });
+            } else {
+              res.marko(template);
+            }
           }
-          res.marko(template);
-        });
+        );
       }
     })
   );

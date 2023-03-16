@@ -4,10 +4,12 @@ interface SSE {
   type?: string;
 }
 
-export default (read?: (param: SSE) => [string, string, boolean?]) =>
+export type ReadFunction = (param: SSE) => [string, string, boolean?];
+
+export default (read?: ReadFunction) =>
   function parser(
     iterator: AsyncIterator<Buffer | string>
-  ): AsyncIterator<[string | undefined, string, boolean?]> {
+  ): AsyncIterator<[string, string, boolean?]> {
     let buf = "";
     let isDone = false;
 

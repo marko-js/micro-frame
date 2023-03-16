@@ -201,4 +201,9 @@ describe("micro-frame-sse", () => {
     "ssr behind reorder",
     fixture(path.join(__dirname, "fixtures/ssr-behind-reorder"))
   );
+
+  describe(
+    "ssr server stream",
+    fixture(path.join(__dirname, "fixtures/ssr-server-stream"))
+  );
 });
