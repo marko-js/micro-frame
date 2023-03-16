@@ -20,7 +20,9 @@ class StreamSource {
     this._closed = false;
   }
 
-  async run(parserIterator: AsyncIterator<[string, string, boolean?]>) {
+  async run(
+    parserIterator: AsyncIterator<[string | undefined, string, boolean?]>
+  ) {
     // eslint-disable-next-line no-constant-condition
     while (true) {
       const { value, done } = await parserIterator.next();
@@ -28,6 +30,11 @@ class StreamSource {
       if (done) break;
 
       const [slotId, html, isDone] = value;
+
+      if (slotId === undefined) {
+        continue;
+      }
+
       const slot = this.getOrCreateSlot(slotId);
       slot.write(html);
       isDone && slot.end();

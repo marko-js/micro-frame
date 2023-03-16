@@ -4,7 +4,9 @@ interface Input {
   src: string;
   fetch?(input: RequestInfo, init?: RequestInit): Promise<Response>;
   name: string;
-  parser(readable: AsyncIterator<string>): AsyncIterator<string[]>;
+  parser(
+    readable: AsyncIterator<string>
+  ): AsyncIterator<[string | undefined, string, boolean?]>;
   method?: string;
   body?: JSON;
   timeout?: number;
