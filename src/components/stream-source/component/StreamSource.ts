@@ -1,7 +1,16 @@
 import createWritable, { StreamWritable } from "./StreamWritable";
 
-export const STREAM_SOURCE_MAP_CLIENT: Map<string, StreamSource> = new Map();
-class StreamSource {
+const STREAM_SOURCE_MAP_CLIENT: Map<string, StreamSource> = new Map();
+export const getOrCreateStreamSource = (name: string): StreamSource => {
+  if (STREAM_SOURCE_MAP_CLIENT.has(name)) {
+    return STREAM_SOURCE_MAP_CLIENT.get(name) as StreamSource;
+  }
+
+  const streamSource = new StreamSource();
+  STREAM_SOURCE_MAP_CLIENT.set(name, streamSource);
+  return streamSource;
+};
+class StreamSource extends EventTarget {
   private readonly _slots: Map<string, StreamWritable>;
   private _closed: boolean;
 
@@ -16,6 +25,7 @@ class StreamSource {
   }
 
   constructor() {
+    super();
     this._slots = new Map();
     this._closed = false;
   }
@@ -48,6 +58,7 @@ class StreamSource {
   }
 
   reset() {
+    this._slots.clear();
     this._closed = false;
   }
 }

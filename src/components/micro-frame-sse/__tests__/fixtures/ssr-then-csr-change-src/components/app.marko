@@ -1,0 +1,14 @@
+class {
+  onCreate() {
+    this.state = { src: "embed", name: "test", slots: ["slot_1", "slot_2"] };
+  }
+  change() {
+    this.state.src = "embed_2";
+  }
+}
+
+<button onClick("change")>Change</button>
+<micro-frame-sse src=state.src name=state.name read=(e => [e.lastEventId, e.data]) />
+<for|slot| of=state.slots>
+  <micro-frame-slot from=state.name slot=slot />
+</for>
