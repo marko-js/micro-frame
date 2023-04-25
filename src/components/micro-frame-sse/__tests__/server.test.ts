@@ -182,6 +182,11 @@ describe("micro-frame-sse", () => {
   );
 
   describe(
+    "ssr invalid sourcename",
+    fixture(path.join(__dirname, "fixtures/ssr-invalid-sourcename"))
+  );
+
+  describe(
     "csr delayed slot",
     fixture(path.join(__dirname, "fixtures/csr-delayed-slot"))
   );
