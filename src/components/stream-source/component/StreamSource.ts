@@ -1,5 +1,6 @@
 import createWritable, { StreamWritable } from "./StreamWritable";
 
+type InvalidateHandler = (newSrc: string) => void;
 const STREAM_SOURCE_MAP_CLIENT: Map<string, StreamSource> = new Map();
 export const getOrCreateStreamSource = (name: string): StreamSource => {
   if (STREAM_SOURCE_MAP_CLIENT.has(name)) {
@@ -10,9 +11,10 @@ export const getOrCreateStreamSource = (name: string): StreamSource => {
   STREAM_SOURCE_MAP_CLIENT.set(name, streamSource);
   return streamSource;
 };
-class StreamSource extends EventTarget {
-  private readonly _slots: Map<string, StreamWritable>;
-  private _closed: boolean;
+class StreamSource {
+  private readonly _slots = new Map<string, StreamWritable>();
+  private _invalidateHandlers = new Set<InvalidateHandler>();
+  private _closed = false;
 
   private getOrCreateSlot(id: string): StreamWritable {
     if (this._slots.has(id)) {
@@ -22,12 +24,6 @@ class StreamSource extends EventTarget {
     const newSlot = createWritable();
     this._slots.set(id, newSlot);
     return newSlot;
-  }
-
-  constructor() {
-    super();
-    this._slots = new Map();
-    this._closed = false;
   }
 
   async run(parserIterator: AsyncIterator<string[]>) {
@@ -57,9 +53,20 @@ class StreamSource extends EventTarget {
     );
   }
 
-  reset() {
+  onInvalidate(handler: InvalidateHandler) {
+    this._invalidateHandlers.add(handler);
+  }
+
+  offInvalidate(handler: InvalidateHandler) {
+    this._invalidateHandlers.delete(handler);
+  }
+
+  invalidate(newSrc: string) {
     this._slots.clear();
     this._closed = false;
+    for (const handler of this._invalidateHandlers) {
+      handler(newSrc);
+    }
   }
 }
 

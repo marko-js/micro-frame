@@ -55,10 +55,7 @@ export = {
     if (this.src === this.input.src) return;
 
     this.src = this.input.src;
-    this.streamSource.reset();
-    this.streamSource.dispatchEvent(
-      new CustomEvent("SRC_CHANGE", { detail: { src: this.input.src } })
-    );
+    this.streamSource.invalidate(this.input.src);
 
     this.controller?.abort();
     const controller = (this.controller = new AbortController());

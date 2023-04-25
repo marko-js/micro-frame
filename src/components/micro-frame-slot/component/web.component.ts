@@ -39,13 +39,13 @@ export = {
   },
   onMount() {
     this.streamSource = getOrCreateStreamSource(this.input.from);
-    const handleSrcChange = (ev: any) => {
-      this.currSrc = ev.detail.src;
+    const handleSrcChange = (src: string) => {
+      this.currSrc = src;
       this.forceUpdate();
     };
-    this.streamSource.addEventListener("SRC_CHANGE", handleSrcChange);
+    this.streamSource.onInvalidate(handleSrcChange);
     this.cancelListener = () =>
-      this.streamSource.removeEventListener("SRC_CHANGE", handleSrcChange);
+      this.streamSource.offInvalidate(handleSrcChange);
     this.onUpdate();
   },
   onDestroy() {
