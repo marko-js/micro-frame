@@ -1,16 +1,6 @@
 import createWritable, { StreamWritable } from "./StreamWritable";
 
 type InvalidateHandler = (newSrc: string) => void;
-const STREAM_SOURCE_MAP_CLIENT: Map<string, StreamSource> = new Map();
-export const getOrCreateStreamSource = (name: string): StreamSource => {
-  if (STREAM_SOURCE_MAP_CLIENT.has(name)) {
-    return STREAM_SOURCE_MAP_CLIENT.get(name) as StreamSource;
-  }
-
-  const streamSource = new StreamSource();
-  STREAM_SOURCE_MAP_CLIENT.set(name, streamSource);
-  return streamSource;
-};
 class StreamSource {
   private readonly _slots = new Map<string, StreamWritable>();
   private _invalidateHandlers = new Set<InvalidateHandler>();

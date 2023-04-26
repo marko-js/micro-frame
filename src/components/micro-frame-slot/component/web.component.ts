@@ -1,8 +1,7 @@
 import { StreamWritable } from "../../stream-source/component/StreamWritable";
-import StreamSource, {
-  getOrCreateStreamSource,
-} from "../../stream-source/component/StreamSource";
+import StreamSource from "../../stream-source/component/StreamSource";
 import getWritableDOM from "writable-dom";
+import { getOrCreateStreamSource } from "../../stream-source/component/helper";
 
 interface Input {
   slot: string;
@@ -39,24 +38,22 @@ export = {
   },
   onMount() {
     this.streamSource = getOrCreateStreamSource(this.input.from);
-    const handleSrcChange = (src: string) => {
-      this.currSrc = src;
-      this.forceUpdate();
-    };
-    this.streamSource.onInvalidate(handleSrcChange);
-    this.cancelListener = () =>
-      this.streamSource.offInvalidate(handleSrcChange);
+    this.streamSource.onInvalidate(this.handleSrcChange.bind(this));
     this.onUpdate();
+  },
+  handleSrcChange(src: string) {
+    this.curSrc = src;
+    this.forceUpdate();
   },
   onDestroy() {
     this.slot?.end();
-    this.cancelListener && this.cancelListener();
+    this.streamSource.offInvalidate(this.handleSrcChange);
   },
   async onUpdate() {
     if (
       this.slotId === this.input.slot &&
       this.from === this.input.from &&
-      this.prevSrc === this.currSrc
+      this.prevSrc === this.curSrc
     )
       return;
 
@@ -64,7 +61,7 @@ export = {
     this.state.err = undefined;
     this.slotId = this.input.slot;
     this.from = this.input.from;
-    this.prevSrc = this.currSrc;
+    this.prevSrc = this.curSrc;
 
     let writable: ReturnType<typeof getWritableDOM> | undefined;
     let err: Error | undefined;
@@ -106,7 +103,7 @@ export = {
   slotId: string | undefined;
   from: string | undefined;
   prevSrc: string | undefined;
-  currSrc: string | undefined;
+  curSrc: string | undefined;
   slot: StreamWritable | undefined;
   streamSource: StreamSource;
   onUpdate(): unknown;
@@ -114,5 +111,5 @@ export = {
   onMount(): unknown;
   onDestroy(): unknown;
   forceUpdate(): unknown;
-  cancelListener(): unknown;
+  handleSrcChange(src: string): unknown;
 };

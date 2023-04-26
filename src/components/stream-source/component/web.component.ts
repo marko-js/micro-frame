@@ -1,4 +1,5 @@
-import StreamSource, { getOrCreateStreamSource } from "./StreamSource";
+import StreamSource from "./StreamSource";
+import { getOrCreateStreamSource } from "./helper";
 
 interface Input {
   src: string;
