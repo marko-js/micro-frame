@@ -3,7 +3,7 @@ import StreamSource from "./StreamSource";
 const streamSourceMapKey = Symbol("stream-source");
 export const getOrCreateStreamSource = (
   name: string,
-  out?: Marko.Out
+  out?: any
 ): StreamSource => {
   const global: any = typeof document === "object" ? window : out?.global;
   if (global === undefined) {
