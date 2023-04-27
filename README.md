@@ -194,6 +194,26 @@ It is removed after the request has either errored, or successfully loaded.
 </micro-frame>
 ```
 
+## `class`
+
+Optional `class` attribute which works the same way as [Marko class attribute](https://markojs.com/docs/syntax/#class-attribute).
+
+```marko
+<micro-frame src="..." class="a c"/>
+<micro-frame src="..." class={ a:true, b:false, c:true }/>
+<micro-frame src="..." class=["a", null, { c:true }]/>
+```
+
+## `style`
+
+Optional `style` attribute which works the same way as [Marko style attribute](https://markojs.com/docs/syntax/#style-attribute).
+
+```marko
+<micro-frame src="..." style="display:block;margin-right:16px"/>
+<micro-frame src="..." style={ display: "block", color: false, marginRight: 16 }/>
+<micro-frame src="..." style=["display:block", null, { marginRight: 16 }]/>
+```
+
 # Communicating between host and child
 
 Communicating with the embedded application happens primarily in one of two ways, either you want to do a full reload of and get new HTML, or you want to orchestrate a client side rendered update.
