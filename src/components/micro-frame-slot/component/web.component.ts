@@ -38,7 +38,8 @@ export = {
   },
   onMount() {
     this.streamSource = getOrCreateStreamSource(this.input.from);
-    this.streamSource.onInvalidate(this.handleSrcChange.bind(this));
+    this.handleSrcChange = this.handleSrcChange.bind(this);
+    this.streamSource.onInvalidate(this.handleSrcChange);
     this.onUpdate();
   },
   handleSrcChange(src: string) {
