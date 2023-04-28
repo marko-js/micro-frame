@@ -50,5 +50,19 @@
         "description": "A block rendered while the resource is loading and removed after loading is complete"
       }
     ]
+  },
+  "@class": {
+    "autocomplete": [
+      {
+        "description": "Marko class attribute"
+      }
+    ]
+  },
+  "@style": {
+    "autocomplete": [
+      {
+        "description": "Marko style attribute"
+      }
+    ]
   }
 }

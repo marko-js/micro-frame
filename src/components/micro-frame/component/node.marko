@@ -38,7 +38,7 @@ static async function fetchStream(input, out) {
   return res.body[Symbol.asyncIterator]();
 }
 
-<div id=component.id data-src=input.src>
+<div id=component.id class=input.class style=input.style data-src=input.src>
   <if(input.loading)>
     <${input.loading}/>
     <!-- output a comment used as a marker to detect where the loading content starts so it can be removed -->

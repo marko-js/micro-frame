@@ -216,6 +216,26 @@ It is removed after the request has either errored, or successfully loaded.
 </micro-frame-slot>
 ```
 
+## `class`
+
+Optional `class` attribute which works the same way as [Marko class attribute](https://markojs.com/docs/syntax/#class-attribute).
+
+```marko
+<micro-frame-slot from="..." slot="..." class="a c"/>
+<micro-frame-slot from="..." slot="..." class={ a:true, b:false, c:true }/>
+<micro-frame-slot from="..." slot="..." class=["a", null, { c:true }]/>
+```
+
+## `style`
+
+Optional `style` attribute which works the same way as [Marko style attribute](https://markojs.com/docs/syntax/#style-attribute).
+
+```marko
+<micro-frame-slot from="..." slot="..." style="display:block;margin-right:16px"/>
+<micro-frame-slot from="..." slot="..." style={ display: "block", color: false, marginRight: 16 }/>
+<micro-frame-slot from="..." slot="..." style=["display:block", null, { marginRight: 16 }]/>
+```
+
 # Communicating between host and child
 
 Communicating between host and child works the same way as [micro-frame](../../../README.md).

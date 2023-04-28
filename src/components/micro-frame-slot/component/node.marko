@@ -7,7 +7,7 @@ $ {
   const loadingPromise =
     input.loading && new Promise((res) => (finishLoading = res));
 }
-<div id=component.id data-slot=input.slot data-from=input.from>
+<div id=component.id class=input.class style=input.style data-slot=input.slot data-from=input.from>
   <macro name="wait">
     <await(stream.next())
       client-reorder=input.clientReorder
