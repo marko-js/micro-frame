@@ -8,8 +8,6 @@
 </head>
 <body>
   <div>Host app</div>
-  <micro-frame-sse src="embed" name="test" read=(e => [e.lastEventId, e.data]) />
-  <micro-frame-slot from="test" slot="slot_1" />
-  <micro-frame-slot from="test" slot="slot_2" />
+  <app/>
 </body>
 </html>

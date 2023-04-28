@@ -1,51 +1,39 @@
-import StreamSource from "../../stream-source/component/StreamSource";
-$ const sourceName = input.from;
-$ let err;
-$ {
-  if (!out.global.STREAM_SOURCE_MAP_SERVER || !out.global.STREAM_SOURCE_MAP_SERVER.has(sourceName))
-    err = new Error(`micro-frame-sse ${sourceName} is not defined.`);
-}
+import { getOrCreateStreamSource } from "../../stream-source/component/helper";
 
-<if(err)>
-  $ if (!input.catch) throw err;
-  <${input.catch}(err)/>
-</if>
-<else>
-  $ const streamSource = out.global.STREAM_SOURCE_MAP_SERVER.get(sourceName);
-  $ const stream = streamSource.slot(input.slot);
-  $ let finishLoading;
-  $ {
-    const loadingPromise =
-      input.loading && new Promise((res) => (finishLoading = res));
-  }
-  <div id=component.id data-slot=input.slot data-from=input.from>
-    <macro name="wait">
-      <await(stream.next())
-        client-reorder=input.clientReorder
-        timeout=input.timeout
-      >
-        <@then|{ value, done }|>
-          <if(!done)>
-            $!{value}
-            <wait/>
-          </if>
-          <else>
-            $ finishLoading && finishLoading();
-          </else>
-        </@then>
-        <@catch|e|>
+$ {
+  const streamSource = getOrCreateStreamSource(input.from, out);
+  const stream = streamSource.slot(input.slot);
+  let finishLoading;
+  const loadingPromise =
+    input.loading && new Promise((res) => (finishLoading = res));
+}
+<div id=component.id data-slot=input.slot data-from=input.from>
+  <macro name="wait">
+    <await(stream.next())
+      client-reorder=input.clientReorder
+      timeout=input.timeout
+    >
+      <@then|{ value, done }|>
+        <if(!done)>
+          $!{value}
+          <wait/>
+        </if>
+        <else>
           $ finishLoading && finishLoading();
-          <${input.catch}(e)/>
-        </@catch>
-      </await>
-    </macro>
-    $ out.bf("@_", component, true);
-    <if(stream)>
-      <if(input.loading)>
-        <await(loadingPromise) placeholder=input.loading client-reorder/>
-      </if>
-      <wait/>
+        </else>
+      </@then>
+      <@catch|e|>
+        $ finishLoading && finishLoading();
+        <${input.catch}(e)/>
+      </@catch>
+    </await>
+  </macro>
+  $ out.bf("@_", component, true);
+  <if(stream)>
+    <if(input.loading)>
+      <await(loadingPromise) placeholder=input.loading client-reorder/>
     </if>
-    $ out.ef();
-  </div>
-</else>
+    <wait/>
+  </if>
+  $ out.ef();
+</div>

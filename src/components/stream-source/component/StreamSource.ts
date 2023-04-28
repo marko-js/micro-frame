@@ -1,9 +1,10 @@
 import createWritable, { StreamWritable } from "./StreamWritable";
 
-export const STREAM_SOURCE_MAP_CLIENT: Map<string, StreamSource> = new Map();
+type InvalidateHandler = (newSrc: string) => void;
 class StreamSource {
-  private readonly _slots: Map<string, StreamWritable>;
-  private _closed: boolean;
+  private readonly _slots = new Map<string, StreamWritable>();
+  private _invalidateHandlers = new Set<InvalidateHandler>();
+  private _closed = false;
 
   private getOrCreateSlot(id: string): StreamWritable {
     if (this._slots.has(id)) {
@@ -13,11 +14,6 @@ class StreamSource {
     const newSlot = createWritable();
     this._slots.set(id, newSlot);
     return newSlot;
-  }
-
-  constructor() {
-    this._slots = new Map();
-    this._closed = false;
   }
 
   async run(parserIterator: AsyncIterator<string[]>) {
@@ -45,6 +41,22 @@ class StreamSource {
     this._slots.forEach((slot: StreamWritable) =>
       err ? slot.error(err) : slot.end()
     );
+  }
+
+  onInvalidate(handler: InvalidateHandler) {
+    this._invalidateHandlers.add(handler);
+  }
+
+  offInvalidate(handler: InvalidateHandler) {
+    this._invalidateHandlers.delete(handler);
+  }
+
+  invalidate(newSrc: string) {
+    this._slots.clear();
+    this._closed = false;
+    for (const handler of this._invalidateHandlers) {
+      handler(newSrc);
+    }
   }
 }
 

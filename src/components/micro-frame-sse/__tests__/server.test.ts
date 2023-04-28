@@ -41,6 +41,20 @@ describe("micro-frame-sse", () => {
   );
 
   describe(
+    "csr then change src",
+    fixture(path.join(__dirname, "fixtures/csr-then-change-src"), [
+      async (page) => await page.click("text=Change"),
+    ])
+  );
+
+  describe(
+    "ssr then csr change src",
+    fixture(path.join(__dirname, "fixtures/ssr-then-csr-change-src"), [
+      async (page) => await page.click("text=Change"),
+    ])
+  );
+
+  describe(
     "csr then toggle slot",
     fixture(path.join(__dirname, "fixtures/csr-then-toggle-slot"), [
       async (page) => await page.click("text=Toggle"),
@@ -146,16 +160,6 @@ describe("micro-frame-sse", () => {
   describe("csr 404", fixture(path.join(__dirname, "fixtures/csr-404")));
 
   describe("ssr 404", fixture(path.join(__dirname, "fixtures/ssr-404")));
-
-  describe(
-    "csr invalid sourcename",
-    fixture(path.join(__dirname, "fixtures/csr-invalid-sourcename"))
-  );
-
-  describe(
-    "ssr invalid sourcename",
-    fixture(path.join(__dirname, "fixtures/ssr-invalid-sourcename"))
-  );
 
   describe(
     "custom read",

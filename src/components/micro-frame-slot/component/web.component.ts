@@ -1,6 +1,7 @@
 import { StreamWritable } from "../../stream-source/component/StreamWritable";
-import { STREAM_SOURCE_MAP_CLIENT } from "../../stream-source/component/StreamSource";
+import StreamSource from "../../stream-source/component/StreamSource";
 import getWritableDOM from "writable-dom";
+import { getOrCreateStreamSource } from "../../stream-source/component/helper";
 
 interface Input {
   slot: string;
@@ -36,34 +37,38 @@ export = {
     };
   },
   onMount() {
-    // Only trigger a new load if this wasn't ssr'd, or the src has changed.
+    this.streamSource = getOrCreateStreamSource(this.input.from);
+    this.handleSrcChange = this.handleSrcChange.bind(this);
+    this.streamSource.onInvalidate(this.handleSrcChange);
     this.onUpdate();
+  },
+  handleSrcChange(src: string) {
+    this.curSrc = src;
+    this.forceUpdate();
   },
   onDestroy() {
     this.slot?.end();
+    this.streamSource.offInvalidate(this.handleSrcChange);
   },
   async onUpdate() {
-    if (this.slotId === this.input.slot && this.from === this.input.from)
+    if (
+      this.slotId === this.input.slot &&
+      this.from === this.input.from &&
+      this.prevSrc === this.curSrc
+    )
       return;
 
     this.state.loading = true;
     this.state.err = undefined;
     this.slotId = this.input.slot;
     this.from = this.input.from;
+    this.prevSrc = this.curSrc;
 
     let writable: ReturnType<typeof getWritableDOM> | undefined;
     let err: Error | undefined;
 
     try {
-      const streamSource = STREAM_SOURCE_MAP_CLIENT.get(this.from);
-      // In case of micro-frame-sse pure server-side rendered,
-      // throw error when the slot trying to connect to the stream
-      if (!streamSource)
-        throw new Error(
-          `micro-frame-sse ${this.from} is not defined or server-side rendered.`
-        );
-
-      this.slot = streamSource.slot(this.slotId);
+      this.slot = this.streamSource.slot(this.slotId);
 
       if (!this.slot) {
         return;
@@ -98,9 +103,14 @@ export = {
   el: HTMLDivElement;
   slotId: string | undefined;
   from: string | undefined;
+  prevSrc: string | undefined;
+  curSrc: string | undefined;
   slot: StreamWritable | undefined;
+  streamSource: StreamSource;
   onUpdate(): unknown;
   onCreate(): unknown;
   onMount(): unknown;
   onDestroy(): unknown;
+  forceUpdate(): unknown;
+  handleSrcChange(src: string): unknown;
 };

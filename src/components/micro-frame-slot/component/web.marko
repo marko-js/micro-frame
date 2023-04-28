@@ -12,5 +12,5 @@ static function noop() {}
   We put the streamed html in a preserved fragment.
   This allows Marko to avoid diffing that section.
   -->
-  $ out.bf("@_", component, !state.err && component.slotId === input.slot && component.from === input.from).ef();
+  $ out.bf("@_", component, !state.err && component.slotId === input.slot && component.from === input.from && component.prevSrc === component.curSrc).ef();
 </div>

@@ -1,4 +1,5 @@
-import StreamSource, { STREAM_SOURCE_MAP_CLIENT } from "./StreamSource";
+import StreamSource from "./StreamSource";
+import { getOrCreateStreamSource } from "./helper";
 
 interface Input {
   src: string;
@@ -35,30 +36,29 @@ function readableToAsyncIterator(
 }
 
 export = {
-  onCreate(input) {
+  onCreate() {
     const ssrEl = document.getElementById(this.id);
     if (ssrEl) {
       this.src = ssrEl.dataset.src;
       ssrEl.removeAttribute("data-src");
       ssrEl.removeAttribute("id");
-    } else {
-      const streamSource = new StreamSource();
-      STREAM_SOURCE_MAP_CLIENT.set(input.name, streamSource);
-      this.streamSource = streamSource;
     }
   },
   onMount() {
     // Only trigger a new load if this wasn't ssr'd, or the src has changed.
+    this.streamSource = getOrCreateStreamSource(this.input.name);
     this.onUpdate();
   },
   onDestroy() {
     this.controller?.abort();
   },
   async onUpdate() {
-    if (this.src === this.input.src || !this.streamSource) return;
+    if (this.src === this.input.src) return;
+
+    this.src = this.input.src;
+    this.streamSource.invalidate(this.input.src);
 
     this.controller?.abort();
-    this.src = this.input.src;
     const controller = (this.controller = new AbortController());
     let err: Error | undefined;
 
@@ -87,7 +87,7 @@ export = {
   method: string | undefined;
   controller: AbortController | undefined;
   onUpdate(): unknown;
-  onCreate(input: Input): unknown;
+  onCreate(): unknown;
   onMount(): unknown;
   onDestroy(): unknown;
 };
