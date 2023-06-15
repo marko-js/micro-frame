@@ -5,19 +5,35 @@ import { getOrCreateStreamSource } from "./helper";
 static const cachePath = path.resolve("node_modules/.cache/fetch");
 
 $ const request = async () => {
-  const incomingMessage = out.stream && (out.stream.req || out.stream.request) || out.global.req || out.global.request;
+  const global = out.global;
+  let origin;
+  let incomingHeaders;
 
-  if (!incomingMessage) {
-    throw new Error("Could not get request from stream/global. Please assign out.global.req with proper request object.");
+  if (global.platform) {
+    const request = global.request;
+    if (!request || !request.headers) {
+      throw new Error("Please assign $global.platform.request with WHATWG request object compatible with @marko/run.");
+    }
+
+    incomingHeaders = Object.fromEntries(request.headers);
+    origin = request.url;
+  } else {
+    const incomingMessage = out.stream && (out.stream.req || out.stream.request) || out.global.req || out.global.request;
+    if (!incomingMessage) {
+      throw new Error("Could not get request from stream/global. Please assign out.global.req with proper request object.");
+    }
+
+    incomingHeaders = incomingMessage.headers;
+    origin = `${incomingMessage.protocol}://${incomingHeaders.host}`;
   }
 
-  const url = new URL(input.src, `${incomingMessage.protocol}://${incomingMessage.headers.host}`);
+  const url = new URL(input.src, origin);
   const res = await (input.fetch || fetch)(url, {
     cachePath,
     cache: input.cache,
     strictSSL: process.env.NODE_TLS_REJECT_UNAUTHORIZED !== "0",
     headers: {
-      ...incomingMessage.headers,
+      ...incomingHeaders,
       ...input.headers
     }
   })
