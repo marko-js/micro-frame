@@ -10,13 +10,19 @@ $ const request = async () => {
   let incomingHeaders;
 
   if (global.platform) {
+    const url = global.url;
+    if (!url) {
+      throw new Error("Please assign $global.platform.url with WHATWG URL object compatible with @marko/run.");
+    }
+
     const request = global.request;
     if (!request || !request.headers) {
       throw new Error("Please assign $global.platform.request with WHATWG request object compatible with @marko/run.");
     }
 
+
     incomingHeaders = Object.fromEntries(request.headers);
-    origin = request.url;
+    origin = url.origin;
   } else {
     const incomingMessage = out.stream && (out.stream.req || out.stream.request) || out.global.req || out.global.request;
     if (!incomingMessage) {
