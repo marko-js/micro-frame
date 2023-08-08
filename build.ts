@@ -4,7 +4,7 @@ import glob from "fast-glob";
 import { build, BuildOptions } from "esbuild";
 
 (async () => {
-  const entryPoints = [];
+  const entryPoints: string[] = [];
   const srcdir = path.resolve("src");
   const outdir = path.resolve("dist");
   const files = glob.stream(["**", "!*.d.ts", "!**/__tests__"], {
