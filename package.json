@@ -41,7 +41,7 @@
     "mocha-snap": "^4.0.2",
     "nyc": "^15.1.0",
     "playwright": "^1.16.1",
-    "prettier": "^2.4.1",
+    "prettier": "^2.8.8",
     "replace": "^1.2.1",
     "semantic-release": "^18.0.0",
     "typescript": "^4.4.4"
@@ -72,7 +72,7 @@
     "format": "npm run lint:eslint -- --fix && npm run lint:prettier -- --write && (fixpack || true)",
     "lint": "tsc -b && npm run lint:eslint && npm run lint:prettier -- -l && fixpack",
     "lint:eslint": "eslint -f visualstudio .",
-    "lint:prettier": "prettier '**/*{.ts,.js,.json,.md,.yml,rc}'",
+    "lint:prettier": "prettier 'src/**/*{.ts,.js,.json,.md,.yml,rc}' --with-node-modules",
     "mocha": "NODE_ENV=test mocha 'src/**/__tests__/*.test.ts'",
     "postpublish": "replace --silent 'dist' 'src' marko.json",
     "prepare": "husky install",
