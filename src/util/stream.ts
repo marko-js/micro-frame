@@ -34,6 +34,10 @@ export class StreamSource {
 
       if (done) break;
 
+      if (value === undefined || !Array.isArray(value)) {
+        continue;
+      }
+
       const [slotId, html, isDone] = value;
       const slot = this.getOrCreateSlot(slotId);
       slot.write(html);

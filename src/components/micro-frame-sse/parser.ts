@@ -62,10 +62,10 @@ function parseEvent(eventStr: string) {
   } = {
     id: undefined,
     data: "",
-    type: undefined,
+    event: undefined,
   };
   eventStr.split("\n").forEach((line) => {
-    const lineMatch = /^(id|type|data): (.*)$/.exec(line);
+    const lineMatch = /^(id|event|data): (.*)$/.exec(line);
     if (lineMatch) {
       if (lineMatch[1] === "data") {
         ev[lineMatch[1]] += lineMatch[2];
@@ -77,6 +77,6 @@ function parseEvent(eventStr: string) {
   return {
     lastEventId: ev.id,
     data: ev.data as string,
-    type: ev.type,
+    type: ev.event,
   };
 }
