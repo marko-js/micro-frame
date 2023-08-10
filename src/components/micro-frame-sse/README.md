@@ -74,7 +74,17 @@ A unique name for the stream which matches slot's [from](#required-from). A page
 
 ## `read`
 
-A function to parse the event which returns slot ID and streamed content as an array (optionally an isDone flag). The input is `MessageEvent`, please refer to [MessageEvent](https://developer.mozilla.org/en-US/docs/Web/API/EventSource/message_event#event_properties) for details.
+A function to parse the event which returns slot ID and streamed content as an array (optionally an isDone flag). The input is `MessageEvent`, please refer to [MessageEvent](https://developer.mozilla.org/en-US/docs/Web/API/EventSource/message_event#event_properties) for details. Return `undefined` will force this event to be skipped.
+
+```typescript
+function read(ev: MessageEvent) {
+  if (ev.lastEventId === "someId") {
+    // event with id: someId will be skipped
+    return;
+  }
+  return [ev.lastEventId, ev.data, true];
+}
+```
 
 Note that isDone flag is important when progressive rendering is in-order, because unfinished slot will block content streaming below the tag.
 
