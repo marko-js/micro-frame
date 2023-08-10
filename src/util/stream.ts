@@ -34,7 +34,7 @@ export class StreamSource {
 
       if (done) break;
 
-      if (value === undefined || !Array.isArray(value)) {
+      if (value === undefined) {
         continue;
       }
 
