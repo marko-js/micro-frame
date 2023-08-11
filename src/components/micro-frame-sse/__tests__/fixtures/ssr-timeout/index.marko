@@ -9,7 +9,11 @@
 <body>
   <div>Host app</div>
   <micro-frame-sse src="embed" name="test" read=(e => [e.lastEventId, e.data]) />
-  <micro-frame-slot from="test" slot="slot_1" timeout=1000 />
+  <micro-frame-slot from="test" slot="slot_1" timeout=1000>
+    <@catch|err|>
+      ${err.message}
+    </@catch>
+  </micro-frame-slot>
   <micro-frame-slot from="test" slot="slot_2" />
 </body>
 </html>
