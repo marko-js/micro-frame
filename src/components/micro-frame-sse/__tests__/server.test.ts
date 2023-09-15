@@ -197,6 +197,11 @@ describe("micro-frame-sse", () => {
   );
 
   describe(
+    "ssr reorder after first chunk",
+    fixture(path.join(__dirname, "fixtures/ssr-reorder-after-first-chunk"))
+  );
+
+  describe(
     "ssr timeout",
     fixture(path.join(__dirname, "fixtures/ssr-timeout"))
   );
