@@ -189,6 +189,14 @@ Flag indicate if the slot need to be streamed out-of-order. Please refer to [cli
 <micro-frame-slot from="..." slot="..." client-reorder />
 ```
 
+### `client-reorder="after-first-chunk"`
+
+There is an additional value supported here which is `after-first-chunk`. When set, the slot will be rendered in-order before first chunk and will convert to out-of-order while streaming. This is useful when loading indicator is controlled inside stream.
+
+```marko
+<micro-frame-slot from="..." slot="..." client-reorder="after-first-chunk" />
+```
+
 ## `timeout` in slot
 
 A timeout in `ms` (defaults to 30s) that will prematurely abort the slot. This will trigger the `<@catch>` if provided.
