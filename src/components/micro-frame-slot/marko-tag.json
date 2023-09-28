@@ -17,10 +17,9 @@
     ]
   },
   "@client-reorder": {
-    "type": "boolean",
     "autocomplete": [
       {
-        "description": "See client-reorder in <await>",
+        "description": "See client-reorder in <await>. Also support additional 'after-first-chunk' value.",
         "descriptionMoreURL": "https://markojs.com/docs/core-tags/#await"
       }
     ]
