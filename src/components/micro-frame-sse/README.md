@@ -254,6 +254,10 @@ Optional `style` attribute which works the same way as [Marko style attribute](h
 <micro-frame-slot from="..." slot="..." style=["display:block", null, { marginRight: 16 }]/>
 ```
 
+## `no-refresh`
+
+Boolean value controls whether the slot should refresh when its stream source src change.
+
 # Communicating between host and child
 
 Communicating between host and child works the same way as [micro-frame](../../../README.md).
