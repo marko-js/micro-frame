@@ -50,6 +50,14 @@
       }
     ]
   },
+  "@no-refresh": {
+    "type": "boolean",
+    "autocomplete": [
+      {
+        "description": "Flag to disable slot content refresh after stream src change."
+      }
+    ]
+  },
   "@class": {
     "autocomplete": [
       {
