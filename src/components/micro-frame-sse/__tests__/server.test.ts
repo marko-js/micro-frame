@@ -55,6 +55,20 @@ describe("micro-frame-sse", () => {
   );
 
   describe(
+    "ssr change src and name",
+    fixture(path.join(__dirname, "fixtures/ssr-change-src-and-name"), [
+      async (page) => await page.click("text=Change"),
+    ])
+  );
+
+  describe(
+    "ssr no refresh",
+    fixture(path.join(__dirname, "fixtures/ssr-no-refresh"), [
+      async (page) => await page.click("text=Change"),
+    ])
+  );
+
+  describe(
     "csr then toggle slot",
     fixture(path.join(__dirname, "fixtures/csr-then-toggle-slot"), [
       async (page) => await page.click("text=Toggle"),

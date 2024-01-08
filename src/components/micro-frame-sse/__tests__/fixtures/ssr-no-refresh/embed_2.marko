@@ -1,0 +1,9 @@
+import { wait } from "../../../../../__tests__/queue";
+
+$ const first = `id: slot_1\ndata: slot_1 after src change\n\n`;
+
+<await(wait())>
+  <@then>
+    $!{first}
+  </@then>
+</await>

@@ -1,0 +1,13 @@
+class {
+  onCreate() {
+    this.state = { src: "embed", name: "test" };
+  }
+  change() {
+    this.state.src = "embed_2";
+  }
+}
+
+<button onClick("change")>Change</button>
+<micro-frame-sse src=state.src name=state.name read=(e => [e.lastEventId, e.data]) />
+<micro-frame-slot from="test" slot="slot_1" />
+<micro-frame-slot from="test" slot="slot_2" no-refresh />
