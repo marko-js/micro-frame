@@ -1,4 +1,4 @@
-const kReadableByName = Symbol("stream-source");
+const kReadableByName = Symbol.for("stream-source");
 
 type InvalidateHandler = (newSrc: string) => void;
 interface DeferredPromise extends Promise<void> {

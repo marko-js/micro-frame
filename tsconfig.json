@@ -1,5 +1,5 @@
 {
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "src/node_modules/**/*"],
   "compilerOptions": {
     "lib": ["dom", "ESNext", "scripthost"],
     "strict": true,
