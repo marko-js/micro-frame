@@ -1,4 +1,4 @@
-const kReadableByName = Symbol.for("stream-source");
+const kReadableByName = Symbol.for("micro-frame:stream-source");
 
 type InvalidateHandler = (newSrc: string) => void;
 interface DeferredPromise extends Promise<void> {
