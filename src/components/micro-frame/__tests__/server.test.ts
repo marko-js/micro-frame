@@ -13,6 +13,11 @@ describe(
 );
 
 describe(
+  "ssr then csr with flush",
+  fixture(path.join(__dirname, "fixtures/ssr-then-csr-with-flush"))
+);
+
+describe(
   "csr stream text",
   fixture(path.join(__dirname, "fixtures/csr-stream-text"))
 );
