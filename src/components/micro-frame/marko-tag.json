@@ -68,6 +68,13 @@
       }
     ]
   },
+  "@client-reorder": {
+    "autocomplete": [
+      {
+        "description": "Wether the micro-frame should should block/buffer content below the micro-frame."
+      }
+    ]
+  },
   "@class": {
     "autocomplete": [
       {

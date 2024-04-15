@@ -121,6 +121,11 @@ describe(
   fixture(path.join(__dirname, "fixtures/ssr-stream-loading"))
 );
 
+describe(
+  "ssr client-reorder loading",
+  fixture(path.join(__dirname, "fixtures/ssr-stream-client-reorder"))
+);
+
 describe("csr 404", fixture(path.join(__dirname, "fixtures/csr-404")));
 
 describe("ssr 404", fixture(path.join(__dirname, "fixtures/ssr-404")));
