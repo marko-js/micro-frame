@@ -214,6 +214,19 @@ Optional `style` attribute which works the same way as [Marko style attribute](h
 <micro-frame src="..." style=["display:block", null, { marginRight: 16 }]/>
 ```
 
+## `client-reorder`
+
+Similar to the [<await> tag client-reorder attribute](https://markojs.com/docs/core-tags/#await) this tells the micro-frame to avoid blocking content later in the document.
+
+> Note when this is used the micro-frame will be buffered instead of streamed and inserted once it's ready.
+
+```marko
+<!--
+This example will disable the default 30s timeout.
+-->
+<micro-frame src="..." timeout=0/>
+```
+
 # Communicating between host and child
 
 Communicating with the embedded application happens primarily in one of two ways, either you want to do a full reload of and get new HTML, or you want to orchestrate a client side rendered update.
