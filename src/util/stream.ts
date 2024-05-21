@@ -113,7 +113,6 @@ export function createWritable(): StreamWritable {
     },
     error(reason: unknown) {
       error = reason;
-      done = true;
       buf = "";
 
       if (pending) {
@@ -122,10 +121,6 @@ export function createWritable(): StreamWritable {
       }
     },
     async next() {
-      if (error) {
-        throw error;
-      }
-
       if (buf) {
         const value = buf;
         buf = "";
@@ -140,6 +135,10 @@ export function createWritable(): StreamWritable {
           value: undefined,
           done: true,
         };
+      }
+
+      if (error) {
+        throw error;
       }
 
       await (pending = createDeferred());
