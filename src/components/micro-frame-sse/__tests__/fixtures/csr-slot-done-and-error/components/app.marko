@@ -12,7 +12,7 @@ class {
 
 <button onClick("loadSlot1")>Load Slot1</button>
 <if(state.mounted)>
-  <micro-frame-sse src="embed" name="test" read(e) { return [e.lastEventId, e.data, true] } />
+  <micro-frame-sse src="embed" name="test" read(e) { if (e.data === "error") { throw new Error("error"); } else { return [e.lastEventId, e.data, true] } } />
   <micro-frame-slot from="test" slot="slot_2">
     <@loading>
       Loading...
