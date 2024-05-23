@@ -171,6 +171,13 @@ describe("micro-frame-sse", () => {
     fixture(path.join(__dirname, "fixtures/csr-slot-done-signal"))
   );
 
+  describe(
+    "csr slot done and error",
+    fixture(path.join(__dirname, "fixtures/csr-slot-done-and-error"), [
+      async (page) => await page.click("text=Load Slot1"),
+    ])
+  );
+
   describe("csr 404", fixture(path.join(__dirname, "fixtures/csr-404")));
 
   describe("ssr 404", fixture(path.join(__dirname, "fixtures/ssr-404")));

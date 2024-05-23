@@ -113,7 +113,6 @@ export function createWritable(): StreamWritable {
     },
     error(reason: unknown) {
       error = reason;
-      buf = "";
 
       if (pending) {
         pending.reject(reason);
