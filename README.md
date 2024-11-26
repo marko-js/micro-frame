@@ -274,4 +274,4 @@ class {
 
 # Code of Conduct
 
-This project adheres to the [eBay Code of Conduct](https://github.com/eBay/.github/blob/main/CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.
+This project adheres to the [eBay Code of Conduct](/.github/CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.
