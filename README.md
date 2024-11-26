@@ -216,16 +216,9 @@ Optional `style` attribute which works the same way as [Marko style attribute](h
 
 ## `client-reorder`
 
-Similar to the [<await> tag client-reorder attribute](https://markojs.com/docs/core-tags/#await) this tells the micro-frame to avoid blocking content later in the document.
+Similar to the [`<await>` tag client-reorder attribute](https://markojs.com/docs/core-tags/#await), this tells the micro-frame to avoid blocking content later in the document.
 
 > Note when this is used the micro-frame will be buffered instead of streamed and inserted once it's ready.
-
-```marko
-<!--
-This example will disable the default 30s timeout.
--->
-<micro-frame src="..." timeout=0/>
-```
 
 # Communicating between host and child
 
@@ -281,4 +274,4 @@ class {
 
 # Code of Conduct
 
-This project adheres to the [eBay Code of Conduct](./.github/CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.
+This project adheres to the [eBay Code of Conduct](/.github/CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.
