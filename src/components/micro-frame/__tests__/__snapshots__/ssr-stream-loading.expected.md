@@ -63,6 +63,6 @@
   </div>
 </div>
 <script>
-  ((e,t,d)=>{t=document.getElementById(e);do{t.removeChild(d=t.firstChild)}while(d.data!==e)})("s0-8-0");
+  ((e,t,d)=>{t=document.getElementById(e);do{t.removeChild(d=t.firstChild.nextSibling)}while(d.data!==e)})("s0-8-0");
 </script>
 ```
