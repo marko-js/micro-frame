@@ -6,229 +6,201 @@ declare const scriptValues: unknown[];
 declare const inlineScriptValues: unknown[];
 
 describe("micro-frame-sse", () => {
-  describe("ssr only", fixture(path.join(__dirname, "fixtures/ssr-only")));
-  describe("csr only", fixture(path.join(__dirname, "fixtures/csr-only")));
-  describe(
-    "ssr then csr",
-    fixture(path.join(__dirname, "fixtures/ssr-then-csr"))
-  );
+  fixture("ssr only", path.join(__dirname, "fixtures/ssr-only"));
+  fixture("csr only", path.join(__dirname, "fixtures/csr-only"));
+  fixture("ssr then csr", path.join(__dirname, "fixtures/ssr-then-csr"));
 
-  describe(
-    "ssr then toggle",
-    fixture(path.join(__dirname, "fixtures/ssr-then-toggle"), [
-      async (page) => await page.click("text=Toggle"),
-      async (page) => await page.click("text=Toggle"),
-      async (page) => await page.click("text=Toggle"),
-    ])
-  );
+  fixture("ssr then toggle", path.join(__dirname, "fixtures/ssr-then-toggle"), [
+    async (page) => await page.click("text=Toggle"),
+    async (page) => await page.click("text=Toggle"),
+    async (page) => await page.click("text=Toggle"),
+  ]);
 
-  describe(
+  fixture(
     "ssr then toggle slot",
-    fixture(path.join(__dirname, "fixtures/ssr-then-toggle-slot"), [
+    path.join(__dirname, "fixtures/ssr-then-toggle-slot"),
+    [
       async (page) => await page.click("text=Toggle"),
       async (page) => await page.click("text=Toggle"),
       async (page) => await page.click("text=Toggle"),
-    ])
+    ]
   );
 
-  describe(
-    "csr then toggle",
-    fixture(path.join(__dirname, "fixtures/csr-then-toggle"), [
-      async (page) => await page.click("text=Toggle"),
-      async (page) => await page.click("text=Toggle"),
-      async (page) => await page.click("text=Toggle"),
-    ])
-  );
+  fixture("csr then toggle", path.join(__dirname, "fixtures/csr-then-toggle"), [
+    async (page) => await page.click("text=Toggle"),
+    async (page) => await page.click("text=Toggle"),
+    async (page) => await page.click("text=Toggle"),
+  ]);
 
-  describe(
+  fixture(
     "csr then change src",
-    fixture(path.join(__dirname, "fixtures/csr-then-change-src"), [
-      async (page) => await page.click("text=Change"),
-    ])
+    path.join(__dirname, "fixtures/csr-then-change-src"),
+    [async (page) => await page.click("text=Change")]
   );
 
-  describe(
+  fixture(
     "ssr then csr change src",
-    fixture(path.join(__dirname, "fixtures/ssr-then-csr-change-src"), [
-      async (page) => await page.click("text=Change"),
-    ])
+    path.join(__dirname, "fixtures/ssr-then-csr-change-src"),
+    [async (page) => await page.click("text=Change")]
   );
 
-  describe(
+  fixture(
     "ssr change src and name",
-    fixture(path.join(__dirname, "fixtures/ssr-change-src-and-name"), [
-      async (page) => await page.click("text=Change"),
-    ])
+    path.join(__dirname, "fixtures/ssr-change-src-and-name"),
+    [async (page) => await page.click("text=Change")]
   );
 
-  describe(
-    "ssr no refresh",
-    fixture(path.join(__dirname, "fixtures/ssr-no-refresh"), [
-      async (page) => await page.click("text=Change"),
-    ])
-  );
+  fixture("ssr no refresh", path.join(__dirname, "fixtures/ssr-no-refresh"), [
+    async (page) => await page.click("text=Change"),
+  ]);
 
-  describe(
+  fixture(
     "csr then toggle slot",
-    fixture(path.join(__dirname, "fixtures/csr-then-toggle-slot"), [
+    path.join(__dirname, "fixtures/csr-then-toggle-slot"),
+    [
       async (page) => await page.click("text=Toggle"),
       async (page) => {
         await page.click("text=Toggle");
         await page.click("text=Open");
       },
       async (page) => await page.click("text=Toggle"),
-    ])
+    ]
   );
 
-  describe(
+  fixture(
     "csr blocking scripts",
-    fixture(
-      path.join(__dirname, "fixtures/csr-blocking-scripts"),
-      async (page) => {
-        assert.deepStrictEqual(
-          await page.evaluate(() => ({
-            inline: inlineScriptValues,
-            external: scriptValues,
-          })),
-          {
-            external: ["a", "b", "c"],
-            inline: [0, "a", 1, "b", 2, "c"],
-          }
-        );
-      }
-    )
+    path.join(__dirname, "fixtures/csr-blocking-scripts"),
+    async (page) => {
+      assert.deepStrictEqual(
+        await page.evaluate(() => ({
+          inline: inlineScriptValues,
+          external: scriptValues,
+        })),
+        {
+          external: ["a", "b", "c"],
+          inline: [0, "a", 1, "b", 2, "c"],
+        }
+      );
+    }
   );
 
-  describe(
+  fixture(
     "csr blocking styles",
-    fixture(
-      path.join(__dirname, "fixtures/csr-blocking-styles"),
-      async (page) => {
-        assert.deepStrictEqual(await page.evaluate(() => inlineScriptValues), [
-          "rgb(255, 0, 0)",
-          "rgb(0, 255, 0)",
-          "rgb(0, 0, 255)",
-        ]);
-      }
-    )
+    path.join(__dirname, "fixtures/csr-blocking-styles"),
+    async (page) => {
+      assert.deepStrictEqual(await page.evaluate(() => inlineScriptValues), [
+        "rgb(255, 0, 0)",
+        "rgb(0, 255, 0)",
+        "rgb(0, 0, 255)",
+      ]);
+    }
   );
 
-  describe(
+  fixture(
     "csr script preloads",
-    fixture(
-      path.join(__dirname, "fixtures/csr-script-preloads"),
-      async (page) => {
-        assert.deepStrictEqual(await page.evaluate(() => scriptValues), [
-          "a",
-          "b",
-          "c",
-          "e",
-        ]);
-      }
-    )
+    path.join(__dirname, "fixtures/csr-script-preloads"),
+    async (page) => {
+      assert.deepStrictEqual(await page.evaluate(() => scriptValues), [
+        "a",
+        "b",
+        "c",
+        "e",
+      ]);
+    }
   );
 
-  describe(
+  fixture(
     "csr link preloads",
-    fixture(path.join(__dirname, "fixtures/csr-link-preloads"))
+    path.join(__dirname, "fixtures/csr-link-preloads")
   );
 
-  describe(
+  fixture(
     "csr image preloads",
-    fixture(path.join(__dirname, "fixtures/csr-image-preloads"))
+    path.join(__dirname, "fixtures/csr-image-preloads")
   );
 
-  describe(
+  fixture(
     "csr cross origin & integrity preloads",
-    fixture(
-      path.join(__dirname, "fixtures/csr-crossorigin-and-integrity-preloads"),
-      async (page) => {
-        assert.deepStrictEqual(await page.evaluate(() => scriptValues), [
-          "a",
-          "b",
-        ]);
-      }
-    )
+    path.join(__dirname, "fixtures/csr-crossorigin-and-integrity-preloads"),
+    async (page) => {
+      assert.deepStrictEqual(await page.evaluate(() => scriptValues), [
+        "a",
+        "b",
+      ]);
+    }
   );
 
-  describe(
+  fixture(
     "csr stream loading",
-    fixture(path.join(__dirname, "fixtures/csr-stream-loading"))
+    path.join(__dirname, "fixtures/csr-stream-loading")
   );
 
-  describe(
+  fixture(
     "ssr stream loading",
-    fixture(path.join(__dirname, "fixtures/ssr-stream-loading"))
+    path.join(__dirname, "fixtures/ssr-stream-loading")
   );
 
-  describe(
+  fixture(
     "ssr slot done signal",
-    fixture(path.join(__dirname, "fixtures/ssr-slot-done-signal"))
+    path.join(__dirname, "fixtures/ssr-slot-done-signal")
   );
 
-  describe(
+  fixture(
     "csr slot done signal",
-    fixture(path.join(__dirname, "fixtures/csr-slot-done-signal"))
+    path.join(__dirname, "fixtures/csr-slot-done-signal")
   );
 
-  describe(
+  fixture(
     "csr slot done and error",
-    fixture(path.join(__dirname, "fixtures/csr-slot-done-and-error"), [
-      async (page) => await page.click("text=Load Slot1"),
-    ])
+    path.join(__dirname, "fixtures/csr-slot-done-and-error"),
+    [async (page) => await page.click("text=Load Slot1")]
   );
 
-  describe("csr 404", fixture(path.join(__dirname, "fixtures/csr-404")));
+  fixture("csr 404", path.join(__dirname, "fixtures/csr-404"));
 
-  describe("ssr 404", fixture(path.join(__dirname, "fixtures/ssr-404")));
+  fixture("ssr 404", path.join(__dirname, "fixtures/ssr-404"));
 
-  describe(
-    "custom read",
-    fixture(path.join(__dirname, "fixtures/custom-read"))
-  );
+  fixture("custom read", path.join(__dirname, "fixtures/custom-read"));
 
-  describe(
+  fixture(
     "ssr custom fetch",
-    fixture(path.join(__dirname, "fixtures/ssr-custom-fetch"))
+    path.join(__dirname, "fixtures/ssr-custom-fetch")
   );
 
-  describe(
+  fixture(
     "csr custom fetch",
-    fixture(path.join(__dirname, "fixtures/csr-custom-fetch"))
+    path.join(__dirname, "fixtures/csr-custom-fetch")
   );
 
-  describe(
+  fixture(
     "ssr delayed slot",
-    fixture(path.join(__dirname, "fixtures/ssr-delayed-slot"))
+    path.join(__dirname, "fixtures/ssr-delayed-slot")
   );
 
-  describe(
+  fixture(
     "csr delayed slot",
-    fixture(path.join(__dirname, "fixtures/csr-delayed-slot"))
+    path.join(__dirname, "fixtures/csr-delayed-slot")
   );
 
-  describe(
+  fixture(
     "ssr client-reorder",
-    fixture(path.join(__dirname, "fixtures/ssr-client-reorder"))
+    path.join(__dirname, "fixtures/ssr-client-reorder")
   );
 
-  describe(
+  fixture(
     "ssr client-reorder false",
-    fixture(path.join(__dirname, "fixtures/ssr-client-reorder-false"))
+    path.join(__dirname, "fixtures/ssr-client-reorder-false")
   );
 
-  describe(
+  fixture(
     "ssr reorder after first chunk",
-    fixture(path.join(__dirname, "fixtures/ssr-reorder-after-first-chunk"))
+    path.join(__dirname, "fixtures/ssr-reorder-after-first-chunk")
   );
 
-  describe(
-    "ssr timeout",
-    fixture(path.join(__dirname, "fixtures/ssr-timeout"))
-  );
+  fixture("ssr timeout", path.join(__dirname, "fixtures/ssr-timeout"));
 
-  describe(
+  fixture(
     "ssr behind reorder",
-    fixture(path.join(__dirname, "fixtures/ssr-behind-reorder"))
+    path.join(__dirname, "fixtures/ssr-behind-reorder")
   );
 });

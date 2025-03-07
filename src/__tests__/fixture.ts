@@ -2,9 +2,8 @@ import fs from "fs";
 import path from "path";
 import crypto from "crypto";
 import snap from "mocha-snap";
-import { JSDOM } from "jsdom";
 import * as playwright from "playwright";
-import { defaultNormalizer, defaultSerializer } from "@marko/fixture-snapshots";
+import toDiffableHTML from "diffable-html";
 import { start } from "./start";
 
 type Step = (page: playwright.Page) => Promise<unknown> | unknown;
@@ -14,25 +13,34 @@ let page: playwright.Page;
 let browser: playwright.Browser | undefined;
 let changes: string[] = [];
 
-export default (dir: string, step?: Step[] | Step) => {
+export default (name: string, dir: string, step?: Step[] | Step) => {
   const steps = step ? (Array.isArray(step) ? step : [step]) : [];
-  return () => {
-    it("renders", async function () {
-      const app = await start(dir);
-
-      try {
-        await waitForPendingRequests(page, () => page.goto(app!.url));
-        await forEachChange((html, i) => snap(html, `loading.${i}.html`));
-
-        for (const [i, step] of steps.entries()) {
-          await waitForPendingRequests(page, step);
-          await forEachChange((html, j) => snap(html, `step-${i}.${j}.html`));
-        }
-      } finally {
-        await app.close();
+  it(name, async function () {
+    const app = await start(dir);
+    const snapshots: string[] = [];
+    try {
+      await trackStep("Load", () => page.goto(app!.url));
+      for (const [i, step] of steps.entries()) {
+        await trackStep(`Step ${i}`, step);
       }
-    });
-  };
+    } finally {
+      await app.close();
+    }
+
+    await snap(snapshots.join("\n\n") + "\n", { ext: ".md" });
+
+    async function trackStep(name: string, step: Step) {
+      await waitForPendingRequests(page, step);
+      await new Promise((r) => setTimeout(r, 500));
+      if (changes.length) {
+        snapshots.push(
+          `# ${name}\n` +
+            changes.map((html) => `\`\`\`html\n${html}\n\`\`\``).join("\n")
+        );
+        changes = [];
+      }
+    }
+  });
 };
 
 // Starts the playwright instance and records mutation data.
@@ -45,20 +53,28 @@ before(async () => {
    */
   await Promise.all([
     context.exposeFunction("__track__", (html: string) => {
-      const formatted = defaultSerializer(
-        defaultNormalizer(JSDOM.fragment(html))
-      ).replace(/http:\/\/[^/]+/g, "");
+      const formatted = toDiffableHTML(
+        html.replace(/http:\/\/[^/]+/g, "")
+      ).trim();
 
       if (changes.at(-1) !== formatted) {
         changes.push(formatted);
       }
     }),
     context.addInitScript(() => {
+      const { port1, port2 } = new MessageChannel();
+      port1.onmessage = () => {
+        if (document.body.innerHTML) {
+          __track__(document.body.innerHTML);
+        }
+        observe();
+      };
+      // Tracks all mutations in the dom.
       const observer = new MutationObserver(() => {
         if (document.body) {
-          __track__(document.body.innerHTML);
+          // throttle the observer so we only snapshot once per frame.
           observer.disconnect();
-          queueMicrotask(observe);
+          requestAnimationFrame(() => port2.postMessage(0));
         }
       });
 
@@ -109,14 +125,20 @@ if (process.env.NYC_CONFIG) {
  * Utility to run a function against the current page and wait until every
  * in flight network request has completed before continuing.
  */
-async function waitForPendingRequests(page: playwright.Page, step: Step) {
+async function waitForPendingRequests(
+  page: playwright.Page,
+  action: (page: playwright.Page) => unknown
+) {
   let remaining = 0;
   let resolve!: () => void;
   const addOne = () => remaining++;
   const finishOne = async () => {
-    // wait a tick to see if new requests start from this one.
-    await page.evaluate(() => {});
-    if (!--remaining) resolve();
+    if (!--remaining) {
+      // wait some time to see if new requests start from this one.
+      await page.evaluate(() => {});
+      await new Promise((r) => setTimeout(r, 200));
+      if (!remaining) resolve();
+    }
   };
   const pending = new Promise<void>((_resolve) => (resolve = _resolve));
 
@@ -126,8 +148,7 @@ async function waitForPendingRequests(page: playwright.Page, step: Step) {
 
   try {
     addOne();
-    await page.pause();
-    await step(page);
+    await action(page);
     finishOne();
     await pending;
   } finally {
@@ -135,20 +156,4 @@ async function waitForPendingRequests(page: playwright.Page, step: Step) {
     page.off("requestfinished", finishOne);
     page.off("requestfailed", finishOne);
   }
-}
-
-/**
- * Applies changes currently and ensures no new changes come in while processing.
- */
-async function forEachChange<F extends (html: string, i: number) => unknown>(
-  fn: F
-) {
-  const len = changes.length;
-  await Promise.all(changes.map(fn));
-
-  if (len !== changes.length) {
-    throw new Error("A mutation occurred when the page should have been idle.");
-  }
-
-  changes = [];
 }
