@@ -53,9 +53,10 @@ export async function start(dir: string) {
           }
         }
 
-        app.get(`/${name === "index" ? "" : name}`, (_req, res) => {
+        app.get(`/${name === "index" ? "" : name}`, (req, res) => {
           res.locals.runtimeId = runtimeId;
           res.locals.assets = assets;
+          res.locals.req = req;
 
           if (process.env.NODE_ENV === "test") {
             // for some reason express suppresses errors in test env.
